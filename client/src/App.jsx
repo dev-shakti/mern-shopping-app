@@ -16,10 +16,8 @@ import NotFound from "./pages/not-found/NotFound";
 import CheckAuth from "./components/common/CheckAuth";
 
 function App() {
-  const isAutheticated = true;
-  const user ={
-    role:"admin"
-  }
+  const isAutheticated = false;
+  const user =null
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       {/* common components */}
