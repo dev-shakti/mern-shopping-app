@@ -14,10 +14,20 @@ import ShoppingCheckout from "./pages/shopping-view/Checkout";
 import ShopingAccount from "./pages/shopping-view/Account";
 import NotFound from "./pages/not-found/NotFound";
 import CheckAuth from "./components/common/CheckAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { checkAuth } from "./redux/authSlice";
 
 function App() {
-  const isAutheticated = false;
-  const user =null
+
+  const {user,isAutheticated}=useSelector((state) =>state.auth)
+  console.log(user,isAutheticated)
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+     dispatch(checkAuth())
+  },[dispatch])
+
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       {/* common components */}

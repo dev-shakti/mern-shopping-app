@@ -1,20 +1,36 @@
-import CommonForm from "@/components/common/Form"
-import { loginFormControls } from "@/config"
-import { useState } from "react"
-import { Link } from "react-router-dom"
-
+import CommonForm from "@/components/common/Form";
+import { loginFormControls } from "@/config";
+import { loginUser } from "@/redux/authSlice";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link} from "react-router-dom";
+import { toast } from "sonner";
 
 const Login = () => {
-  const [formData,setFormData]=useState({
-    email:"",
-    password:""
-  })
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
+  const dispatch = useDispatch();
 
-  const onSubmit = (e) => {
-    e.preventDefault()
-    //api implementation
+  function onSubmit(e) {
+    e.preventDefault();
+
+    dispatch(loginUser(formData))
+      .then((data) => {
+        if (data?.payload?.success) {
+          toast.success(data.payload.message);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(
+          error?.payload?.message || error?.message || "Something went wrong!"
+        );
+      });
   }
+
   return (
     <div className="mx-auto w-full max-w-md space-y-6">
       <div className="text-center">
@@ -39,7 +55,7 @@ const Login = () => {
         onSubmit={onSubmit}
       />
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
