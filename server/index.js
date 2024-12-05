@@ -3,6 +3,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const dotenv=require("dotenv")
 const {connectToDb}=require("./db/db")
+const authRoute=require("./routes/auth.route")
 dotenv.config()
 
 const app=express()
@@ -30,9 +31,7 @@ app.use(
   );
 
 //routes
-app.get("/",(req,res) => {
-    res.json({msg:"Home route loading"})
-})
+app.use("/api/auth",authRoute)
 
   app.listen(port, () => {
     console.log(`App is running on port: ${port}`)
