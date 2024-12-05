@@ -1,0 +1,49 @@
+/* eslint-disabled */
+import { Navigate, useLocation } from "react-router-dom";
+import PropTypes from "prop-types"; // Import PropTypes for prop validation
+
+const CheckAuth = ({ isAutheticated, user, children }) => {
+  const location = useLocation();
+
+  // Redirect to login if the user is not authenticated 
+  //and not already on the login or register page.
+  if (
+    !isAutheticated &&
+    !(
+      location.pathname.includes("login") ||
+      location.pathname.includes("register")
+    )
+  ) {
+    return <Navigate to="/auth/login" />;
+  }
+
+  // Redirect authenticated users away from login/register pages 
+  //based on their role.
+
+  if (
+    isAutheticated &&
+    (location.pathname.includes("login") || location.pathname.includes("register"))
+  ) {
+    if (user?.role === "admin") {
+      return <Navigate to="/admin/dashboard" />;
+    } else {
+      return <Navigate to="/shop/home" />;
+    }
+  }
+
+  // Redirect non-admin users trying to access admin pages.
+  if (isAutheticated && user?.role !== "admin" && location.pathname.includes("admin")) {
+    return <Navigate to="/unauth-page" />;
+  }
+
+  // Allow admins to access admin pages.
+  if (isAutheticated && user?.role === "admin" && location.pathname.includes("shop")) {
+    return <Navigate to="/admin/dashbaord" />;
+  }
+
+  // Render children if none of the above conditions are met.
+  return <>{children}</>;
+};
+
+export default CheckAuth
+
