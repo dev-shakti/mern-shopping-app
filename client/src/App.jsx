@@ -18,10 +18,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuth } from "./redux/authSlice";
 
+
+
 function App() {
 
-  const {user,isAutheticated}=useSelector((state) =>state.auth)
-  console.log(user,isAutheticated)
+  const {user,isAuthenticated}=useSelector((state) =>state.auth)
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -35,7 +36,7 @@ function App() {
         <Route
           path="/auth"
           element={
-            <CheckAuth isAutheticated={isAutheticated} user={user}>
+            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
               <AuthLayout />
             </CheckAuth>
           }
@@ -47,7 +48,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <CheckAuth isAutheticated={isAutheticated} user={user}>
+            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
               <AdminLayout />
             </CheckAuth>
           }
@@ -61,7 +62,7 @@ function App() {
         <Route
           path="/shop"
           element={
-            <CheckAuth isAutheticated={isAutheticated} user={user}>
+            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
               <ShoppingLayout />
             </CheckAuth>
           }

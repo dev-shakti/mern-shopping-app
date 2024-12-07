@@ -2,13 +2,13 @@
 import { Navigate, useLocation } from "react-router-dom";
 import PropTypes from "prop-types"; // Import PropTypes for prop validation
 
-const CheckAuth = ({ isAutheticated, user, children }) => {
+const CheckAuth = ({ isAuthenticated, user, children }) => {
   const location = useLocation();
-
+  
   // Redirect to login if the user is not authenticated 
   //and not already on the login or register page.
   if (
-    !isAutheticated &&
+    !isAuthenticated &&
     !(
       location.pathname.includes("login") ||
       location.pathname.includes("register")
@@ -21,7 +21,7 @@ const CheckAuth = ({ isAutheticated, user, children }) => {
   //based on their role.
 
   if (
-    isAutheticated &&
+    isAuthenticated &&
     (location.pathname.includes("login") || location.pathname.includes("register"))
   ) {
     if (user?.role === "admin") {
@@ -32,12 +32,12 @@ const CheckAuth = ({ isAutheticated, user, children }) => {
   }
 
   // Redirect non-admin users trying to access admin pages.
-  if (isAutheticated && user?.role !== "admin" && location.pathname.includes("admin")) {
+  if (isAuthenticated && user?.role !== "admin" && location.pathname.includes("admin")) {
     return <Navigate to="/unauth-page" />;
   }
 
   // Allow admins to access admin pages.
-  if (isAutheticated && user?.role === "admin" && location.pathname.includes("shop")) {
+  if (isAuthenticated && user?.role === "admin" && location.pathname.includes("shop")) {
     return <Navigate to="/admin/dashbaord" />;
   }
 

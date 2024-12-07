@@ -106,6 +106,7 @@ const logoutUser = async (req, res) => {
 };
 
 const verifyUser = async (req, res) => {
+ 
   try {
     const user = req.user;
     res.status(200).json({

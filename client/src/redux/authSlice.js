@@ -5,29 +5,23 @@ const initialState = {
   isAuthenticated: false,
   isLoading: true,
   user: null,
-  error: null, // Optional: Add an error field to manage errors
 };
 
-// Async Thunk for registering a user
 export const registerUser = createAsyncThunk(
-  "auth/register",
-  async (formData, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:4415/api/auth/register",
-        formData,
-        {
-          withCredentials: true,
-        }
-      );
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data); // Handle errors
-    }
+  "/auth/register",
+
+  async (formData) => {
+    const response = await axios.post(
+      "http://localhost:4415/api/auth/register",
+      formData,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
   }
 );
 
-// Async Thunk for logging in a user
 export const loginUser = createAsyncThunk(
   "/auth/login",
 
@@ -39,15 +33,12 @@ export const loginUser = createAsyncThunk(
         withCredentials: true,
       }
     );
-
-    return response.data;
+    return response.data.user;
   }
 );
 
-
-// Async Thunk for verify user
 export const checkAuth = createAsyncThunk(
-  "/auth/verify",
+  "/auth/checkAuth",
 
   async () => {
     const response = await axios.get(
@@ -60,7 +51,7 @@ export const checkAuth = createAsyncThunk(
         },
       }
     );
-
+   console.log(response)
     return response.data;
   }
 );
@@ -72,67 +63,55 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {
-      state.user = action.payload;
-      state.isAuthenticated = true;
-    },
+    setUser: (state, action) => {},
   },
   extraReducers: (builder) => {
     // Handle registerUser
     builder
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
-        state.error = null; // Reset error on new request
       })
       .addCase(registerUser.fulfilled, (state) => {
         state.isLoading = false;
         state.user =null;
-        state.isAuthenticated = true;
-        state.error = null;
+        state.isAuthenticated=false;
       })
-      .addCase(registerUser.rejected, (state, action) => {
+      .addCase(registerUser.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
-        state.error = action.payload; 
       });
 
     // Handle loginUser
     builder
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
-        state.error = null; // Reset error on new request
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
-        state.error = null;
       })
-      .addCase(loginUser.rejected, (state, action) => {
+      .addCase(loginUser.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
-        state.error = action.payload; 
       });
 
-       // Handle autheticate user
+    //Handle autheticate user
     builder
     .addCase(checkAuth.pending, (state) => {
       state.isLoading = true;
-      state.error = null; 
     })
     .addCase(checkAuth.fulfilled, (state, action) => {
       state.isLoading = false;
       state.user = action.payload.success ? action.payload.user : null;
       state.isAuthenticated = action.payload.success;
-      state.error = null;
     })
-    .addCase(checkAuth.rejected, (state, action) => {
+    .addCase(checkAuth.rejected, (state) => {
       state.isLoading = false;
       state.user = null;
-      state.isAuthenticated = false;
-      state.error = action.payload; 
+      state.isAuthenticated = false; 
     });
   },
 });

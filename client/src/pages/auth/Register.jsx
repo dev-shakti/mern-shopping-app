@@ -17,17 +17,14 @@ const Register = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-  
-    try {
-      const data = await dispatch(registerUser(formData)).unwrap();
-      if(data.success){
-          navigate("/auth/login")
-          toast.success(data.message)
+    dispatch(registerUser(formData)).then((data) => {
+      if (data?.payload?.success) {
+        toast.success(data?.payload?.message)
+        navigate("/auth/login");
+      } else {
+        toast.error(data?.payload?.message)
       }
-    } catch (error) {
-      console.error(error);
-      toast.error( error?.message || "Something went wrong!")
-    }
+    });
   };
   return (
     <div className="mx-auto w-full max-w-md space-y-6">
