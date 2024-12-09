@@ -4,6 +4,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const { connectToDb } = require("./db/db");
 const authRoute = require("./routes/auth.route");
+const adminProductRoute=require("./routes/admin/product.route")
 dotenv.config();
 
 const app = express();
@@ -32,6 +33,7 @@ app.use(
 
 //routes
 app.use("/api/auth", authRoute);
+app.use("/api/admin/products", adminProductRoute);
 
 app.listen(port, () => {
   console.log(`App is running on port: ${port}`);
