@@ -5,7 +5,6 @@ import Register from "./pages/auth/Register";
 import AdminLayout from "./components/admin/Layout";
 import AdminDashboard from "./pages/admin-view/Dashboard";
 import AdminOrder from "./pages/admin-view/Order";
-import Products from "./pages/admin-view/Products";
 import AdminFeatures from "./pages/admin-view/Features";
 import ShoppingLayout from "./pages/shopping-view/Layout";
 import ShoppingHome from "./pages/shopping-view/Home";
@@ -17,6 +16,7 @@ import CheckAuth from "./components/common/CheckAuth";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuth } from "./redux/authSlice";
+import AdminProducts from "./pages/admin-view/Products";
 
 
 
@@ -55,7 +55,7 @@ function App() {
         >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="orders" element={<AdminOrder />} />
-          <Route path="products" element={<Products />} />
+          <Route path="products" element={<AdminProducts/>} />
           <Route path="features" element={<AdminFeatures />} />
         </Route>
         {/* shopping */}
