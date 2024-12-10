@@ -1,8 +1,13 @@
+import ProductImageUpload from "@/components/admin/ProductImageUpload";
 import CommonForm from "@/components/common/Form";
 import { Button } from "@/components/ui/button";
-import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
-import { Sheet } from "lucide-react";
 import { useState } from "react";
 import { Fragment } from "react";
 
@@ -21,6 +26,9 @@ const AdminProducts = () => {
   const [openCreateProductsDialog, setOpenCreateProductsDialog] =
     useState(false);
   const [formData, setFormData] = useState(initialState);
+  const [imageFile, setImageFile] = useState(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [imageLoadingState, setImageLoadingState] = useState(false);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -43,16 +51,24 @@ const AdminProducts = () => {
           <SheetHeader>
             <SheetTitle>Add New Product</SheetTitle>
           </SheetHeader>
-        </SheetContent>
-        <div className="py-6">
-          <CommonForm
-            formData={formData}
-            setFormData={setFormData}
-            onSubmit={onSubmit}
-            buttonText={"Add Prodcts"}
-            formControls={addProductFormElements}
+          <ProductImageUpload
+            imageFile={imageFile}
+            setImageFile={setImageFile}
+            uploadedImageUrl={uploadedImageUrl}
+            setUploadedImageUrl={setUploadedImageUrl}
+            imageLoadingState={imageLoadingState}
+            setImageLoadingState={setImageLoadingState}
           />
-        </div>
+          <div className="py-6">
+            <CommonForm
+              formData={formData}
+              setFormData={setFormData}
+              onSubmit={onSubmit}
+              buttonText={"Add Products"}
+              formControls={addProductFormElements}
+            />
+          </div>
+        </SheetContent>
       </Sheet>
     </Fragment>
   );
