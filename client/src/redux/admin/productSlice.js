@@ -9,6 +9,7 @@ const initialState = {
 export const addNewProduct = createAsyncThunk(
   "/products/addnewproduct",
   async (formData) => {
+    console.log(formData)
     const results = await axios.post(
       "http://localhost:4415/api/admin/products/add",
       formData,

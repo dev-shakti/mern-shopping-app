@@ -8,8 +8,11 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
+import { addNewProduct, fetchAllProducts } from "@/redux/admin/productSlice";
 import { useState } from "react";
 import { Fragment } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "sonner";
 
 const initialState = {
   image: null,
@@ -20,7 +23,6 @@ const initialState = {
   price: "",
   salePrice: "",
   totalStock: "",
-  averageReview: 0,
 };
 const AdminProducts = () => {
   const [openCreateProductsDialog, setOpenCreateProductsDialog] =
@@ -29,9 +31,26 @@ const AdminProducts = () => {
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
-
+  const dispatch = useDispatch();
+  
   const onSubmit = (e) => {
     e.preventDefault();
+  
+    dispatch(addNewProduct({...formData,Image:uploadedImageUrl}))
+      .then((data) => {
+        if(data.payload.success){
+          dispatch(fetchAllProducts())
+          setFormData(initialState)
+          setOpenCreateProductsDialog(false)
+          toast.success(data.payload.message);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(
+          error?.payload?.message || error?.message || "Something went wrong!"
+        );
+      });
   };
   return (
     <Fragment>
@@ -40,7 +59,7 @@ const AdminProducts = () => {
           Add New Product
         </Button>
       </div>
-      <div className="grid gap-4 md:grid-col-3 lg:grid-cols-4">products</div>
+      <div className="grid gap-4 md:grid-col-3 lg:grid-cols-4"></div>
       <Sheet
         open={openCreateProductsDialog}
         onOpenChange={() => {

@@ -32,7 +32,7 @@ const addProduct = async (req, res) => {
       salePrice,
       totalStock,
     } = req.body;
-
+   console.log(image)
     //create new product
     const newProduct = new Product({
       image,
@@ -44,7 +44,7 @@ const addProduct = async (req, res) => {
       salePrice,
       totalStock,
     });
-
+   
     //save product to db
     await newProduct.save();
 
