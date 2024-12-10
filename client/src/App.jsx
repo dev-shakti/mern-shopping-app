@@ -18,16 +18,15 @@ import { useEffect } from "react";
 import { checkAuth } from "./redux/authSlice";
 import AdminProducts from "./pages/admin-view/Products";
 
-
-
 function App() {
-
-  const {user,isAuthenticated}=useSelector((state) =>state.auth)
+  const { user, isAuthenticated, isLoading } = useSelector(
+    (state) => state.auth
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
-     dispatch(checkAuth())
-  },[dispatch])
+    dispatch(checkAuth());
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
@@ -36,7 +35,11 @@ function App() {
         <Route
           path="/auth"
           element={
-            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+            <CheckAuth
+              isAuthenticated={isAuthenticated}
+              user={user}
+              isLoading={isLoading}
+            >
               <AuthLayout />
             </CheckAuth>
           }
@@ -48,21 +51,29 @@ function App() {
         <Route
           path="/admin"
           element={
-            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+            <CheckAuth
+              isAuthenticated={isAuthenticated}
+              user={user}
+              isLoading={isLoading}
+            >
               <AdminLayout />
             </CheckAuth>
           }
         >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="orders" element={<AdminOrder />} />
-          <Route path="products" element={<AdminProducts/>} />
+          <Route path="products" element={<AdminProducts />} />
           <Route path="features" element={<AdminFeatures />} />
         </Route>
         {/* shopping */}
         <Route
           path="/shop"
           element={
-            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+            <CheckAuth
+              isAuthenticated={isAuthenticated}
+              user={user}
+              isLoading={isLoading}
+            >
               <ShoppingLayout />
             </CheckAuth>
           }

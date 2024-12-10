@@ -1,10 +1,14 @@
 /* eslint-disabled */
 import { Navigate, useLocation } from "react-router-dom";
-import PropTypes from "prop-types"; // Import PropTypes for prop validation
 
-const CheckAuth = ({ isAuthenticated, user, children }) => {
+const CheckAuth = ({ isAuthenticated, user, children, isLoading }) => {
   const location = useLocation();
   
+
+  if (isLoading) {
+    // Show a loading indicator or placeholder
+    return <div>Loading...</div>;
+  }
   // Redirect to login if the user is not authenticated 
   //and not already on the login or register page.
   if (
