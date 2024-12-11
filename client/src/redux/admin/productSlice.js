@@ -19,7 +19,7 @@ export const addNewProduct = createAsyncThunk(
         },
       }
     );
-    
+    console.log(results)
     return results?.data?.products;
   }
 );
@@ -54,7 +54,7 @@ export const editProduct = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
   "/products/deleteProduct",
-  async () => {
+  async (id) => {
     const results = await axios.delete(
       `http://localhost:4415/api/admin/products/delete/${id}`
     );

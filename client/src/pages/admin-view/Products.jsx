@@ -9,7 +9,12 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
-import { addNewProduct, fetchAllProducts } from "@/redux/admin/productSlice";
+import {
+  addNewProduct,
+  deleteProduct,
+  editProduct,
+  fetchAllProducts,
+} from "@/redux/admin/productSlice";
 import { useEffect, useState } from "react";
 import { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,19 +37,69 @@ const AdminProducts = () => {
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
-  const {productList}=useSelector((state) => state.adminProducts)
+  const [selectedItemId, setSelectedItemId] = useState(null);
+  const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
+
+  function isFormValid() {
+    return Object.keys(formData)
+      .map((key) => formData[key] !== "")
+      .every((item) => item);
+  }
 
   const onSubmit = (e) => {
     e.preventDefault();
-    
+
     const updatedData = { ...formData, image: uploadedImageUrl };
-    dispatch(addNewProduct({...updatedData}))
+
+    selectedItemId !== null
+      ? dispatch(editProduct({ formData, id: selectedItemId }))
+          .then((data) => {
+            if (data?.payload?.success) {
+              console.log(data.payload);
+              dispatch(fetchAllProducts());
+              setFormData(initialState);
+              setOpenCreateProductsDialog(false);
+              setSelectedItemId(null);
+              toast.success(data.payload.message);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            toast.error(
+              error?.payload?.message ||
+                error?.message ||
+                "Something went wrong!"
+            );
+          })
+      : dispatch(addNewProduct({ ...updatedData }))
+          .then((data) => {
+            if (data?.payload?.success) {
+              dispatch(fetchAllProducts());
+              setFormData(initialState);
+              setOpenCreateProductsDialog(false);
+              toast.success(data.payload.message);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            toast.error(
+              error?.payload?.message ||
+                error?.message ||
+                "Something went wrong!"
+            );
+          });
+  };
+
+  useEffect(() => {
+    dispatch(fetchAllProducts());
+  }, [dispatch]);
+
+  function handleDelete(id) {
+    dispatch(deleteProduct(id))
       .then((data) => {
-        if(data.payload.success){
-          dispatch(fetchAllProducts())
-          setFormData(initialState)
-          setOpenCreateProductsDialog(false)
+        if (data?.payload?.success) {
+          dispatch(fetchAllProducts());
           toast.success(data.payload.message);
         }
       })
@@ -54,17 +109,7 @@ const AdminProducts = () => {
           error?.payload?.message || error?.message || "Something went wrong!"
         );
       });
-  };
-
-  useEffect(() => {
-    dispatch(fetchAllProducts())
-  },[dispatch])
-
-  useEffect(() => {
-    console.log(productList)
-  },[productList])
-
- 
+  }
   return (
     <Fragment>
       <div className="mb-5 w-full flex justify-end">
@@ -73,11 +118,18 @@ const AdminProducts = () => {
         </Button>
       </div>
       <div className="grid gap-4 md:grid-col-3 lg:grid-cols-4">
-        {productList && productList.length>0 ?
-         (productList.map((product) => (
-          <ProductCard product={product} key={product._id}/>
-         )))
-        : null}
+        {productList && productList.length > 0
+          ? productList.map((product) => (
+              <ProductCard
+                product={product}
+                key={product._id}
+                handleDelete={handleDelete}
+                setSelectedItemId={setSelectedItemId}
+                setFormData={setFormData}
+                setOpenCreateProductsDialog={setOpenCreateProductsDialog}
+              />
+            ))
+          : null}
       </div>
       <Sheet
         open={openCreateProductsDialog}
@@ -87,7 +139,9 @@ const AdminProducts = () => {
       >
         <SheetContent side="right" className="overflow-auto">
           <SheetHeader>
-            <SheetTitle>Add New Product</SheetTitle>
+            <SheetTitle>
+              {selectedItemId ? "Edit Product" : "Add New Product"}
+            </SheetTitle>
           </SheetHeader>
           <ProductImageUpload
             imageFile={imageFile}
@@ -102,8 +156,9 @@ const AdminProducts = () => {
               formData={formData}
               setFormData={setFormData}
               onSubmit={onSubmit}
-              buttonText={"Add Products"}
+              buttonText={selectedItemId ? "Edit" : "Add"}
               formControls={addProductFormElements}
+              isBtnDisabled={!isFormValid()}
             />
           </div>
         </SheetContent>
