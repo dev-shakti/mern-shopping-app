@@ -6,7 +6,7 @@ import AdminLayout from "./components/admin/Layout";
 import AdminDashboard from "./pages/admin-view/Dashboard";
 import AdminOrder from "./pages/admin-view/Order";
 import AdminFeatures from "./pages/admin-view/Features";
-import ShoppingLayout from "./pages/shopping-view/Layout";
+import ShoppingLayout from "./components/shopping-view/Layout";
 import ShoppingHome from "./pages/shopping-view/Home";
 import ShopListing from "./pages/shopping-view/Listing";
 import ShoppingCheckout from "./pages/shopping-view/Checkout";
