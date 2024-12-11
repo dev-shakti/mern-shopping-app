@@ -9,7 +9,7 @@ const initialState = {
 export const addNewProduct = createAsyncThunk(
   "/products/addnewproduct",
   async (formData) => {
-    console.log(formData)
+
     const results = await axios.post(
       "http://localhost:4415/api/admin/products/add",
       formData,
@@ -19,8 +19,8 @@ export const addNewProduct = createAsyncThunk(
         },
       }
     );
-
-    return results?.data;
+    
+    return results?.data?.products;
   }
 );
 
@@ -31,7 +31,7 @@ export const fetchAllProducts = createAsyncThunk(
       "http://localhost:4415/api/admin/products/get"
     );
 
-    return results?.data;
+    return results?.data?.products;
   }
 );
 

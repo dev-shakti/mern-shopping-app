@@ -1,3 +1,4 @@
+import ProductCard from "@/components/admin/ProductCard";
 import ProductImageUpload from "@/components/admin/ProductImageUpload";
 import CommonForm from "@/components/common/Form";
 import { Button } from "@/components/ui/button";
@@ -9,9 +10,9 @@ import {
 } from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
 import { addNewProduct, fetchAllProducts } from "@/redux/admin/productSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Fragment } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
 const initialState = {
@@ -31,12 +32,14 @@ const AdminProducts = () => {
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
+  const {productList}=useSelector((state) => state.adminProducts)
   const dispatch = useDispatch();
-  
+
   const onSubmit = (e) => {
     e.preventDefault();
-  
-    dispatch(addNewProduct({...formData,Image:uploadedImageUrl}))
+    
+    const updatedData = { ...formData, image: uploadedImageUrl };
+    dispatch(addNewProduct({...updatedData}))
       .then((data) => {
         if(data.payload.success){
           dispatch(fetchAllProducts())
@@ -52,6 +55,16 @@ const AdminProducts = () => {
         );
       });
   };
+
+  useEffect(() => {
+    dispatch(fetchAllProducts())
+  },[dispatch])
+
+  useEffect(() => {
+    console.log(productList)
+  },[productList])
+
+ 
   return (
     <Fragment>
       <div className="mb-5 w-full flex justify-end">
@@ -59,7 +72,13 @@ const AdminProducts = () => {
           Add New Product
         </Button>
       </div>
-      <div className="grid gap-4 md:grid-col-3 lg:grid-cols-4"></div>
+      <div className="grid gap-4 md:grid-col-3 lg:grid-cols-4">
+        {productList && productList.length>0 ?
+         (productList.map((product) => (
+          <ProductCard product={product} key={product._id}/>
+         )))
+        : null}
+      </div>
       <Sheet
         open={openCreateProductsDialog}
         onOpenChange={() => {

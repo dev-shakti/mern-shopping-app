@@ -37,6 +37,7 @@ const ProductImageUpload = ({
         "http://localhost:4415/api/admin/products/upload-image",
         data
       );
+     
       if (response.data.success) {
         setUploadedImageUrl(response.data.result.url);
         setImageLoadingState(false);
