@@ -25,7 +25,7 @@ const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
           <p className="text-muted-foreground text-2xl mt-2">
             {productDetails?.description}
           </p>
-          <div className="flex justify-between items-center mt-4">
+          {/* <div className="flex justify-between items-center mt-4">
             <p
               className={`text-3xl font-bold text-primary ${
                 productDetails?.salePrice > 0 ? "line-through" : ""
@@ -38,7 +38,7 @@ const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
                 ${productDetails?.salePrice}
               </p>
             ) : null}
-          </div>
+          </div> */}
           <div className="flex items-start gap-1 mt-4 mb-2">
             <StarIcon className="w-5 h-5 fill-primary" />
             <StarIcon className="w-5 h-5 fill-primary" />

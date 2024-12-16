@@ -21,7 +21,7 @@ const addToCart = async (req, res) => {
     }
 
     // Find the user's cart
-    const cart = await Cart.findOne({ userId });
+    let cart = await Cart.findOne({ userId });
     if (!cart) {
       cart = new Cart({ userId, items: [] });
     }
@@ -30,7 +30,7 @@ const addToCart = async (req, res) => {
     const findCurrentProductIndex = cart.items.findIndex(
       (item) => item.productId.toString() === productId
     );
-
+  
     if (findCurrentProductIndex === -1) {
       // Add the product to the cart
       cart.items.push({ productId, quantity });
@@ -43,7 +43,7 @@ const addToCart = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Product added successfully",
+      message: "Product added to cart successfully",
       data: cart,
     });
   } catch (error) {

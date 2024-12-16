@@ -8,6 +8,7 @@ import {
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
+import { addToCart, fetchCartItems } from "@/redux/shop/cartSlice";
 import {
   fetchProductDetails,
   getFilterProducts,
@@ -19,19 +20,22 @@ import {
 import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const ShopListing = () => {
   const [sort, setSort] = useState(null);
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
-  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
   const { productList, productDetails } = useSelector(
     (state) => state.shoppingProducts
   );
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(getFilterProducts())
       .then((data) => {
-        console.log(data);
+        //console.log(data);
       })
       .catch((err) => {
         console.log(err);
@@ -39,8 +43,7 @@ const ShopListing = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("Product details:", productDetails);
-    if(productDetails!==null) setOpenDetailsDialog(true)
+    if (productDetails !== null) setOpenDetailsDialog(true);
   }, [productDetails]);
 
   const handleSort = (value) => {
@@ -54,6 +57,25 @@ const ShopListing = () => {
       })
       .catch((err) => {
         console.log(err);
+      });
+  };
+
+  const handleAddToCart = (getCurrentProductId) => {
+    dispatch(
+      addToCart({
+        userId: user?.id,
+        productId: getCurrentProductId,
+        quantity: 1,
+      })
+    )
+      .then((data) => {
+        if(data?.payload?.success){
+          dispatch(fetchCartItems({userId: user?.id}))
+          toast.success(data.payload.message)
+        }
+      })
+      .catch((error) => {
+        console.error(error.message);
       });
   };
 
@@ -109,6 +131,7 @@ const ShopListing = () => {
                   key={product._id}
                   product={product}
                   handleGetProductDetails={handleGetProductDetails}
+                  handleAddToCart={handleAddToCart}
                 />
               ))
             ) : (

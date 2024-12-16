@@ -1,5 +1,5 @@
 import { shoppingViewHeaderMenuItems } from "@/config";
-import { HousePlug, LogOut, Menu, UserCog } from "lucide-react";
+import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Label } from "../ui/label";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
@@ -16,6 +16,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "@/redux/authSlice";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import UserCartWrapper from "./UserCartWrapper";
+import { fetchCartItems } from "@/redux/shop/cartSlice";
 
 function MenuItems() {
   return (
@@ -34,7 +37,10 @@ function MenuItems() {
 
 function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
+  const [openCartSheet, setOpenCartSheet] = useState(false);
+  const { cartItems } = useSelector((state) => state.shoppingCart);
   const dispatch = useDispatch();
+
   function handleLogout() {
     dispatch(logoutUser())
       .then((data) => {
@@ -42,8 +48,34 @@ function HeaderRightContent() {
       })
       .catch((error) => console.error(error));
   }
+
+  useEffect(() => {
+    dispatch(fetchCartItems(user?.id));
+  }, [dispatch, user?.id]);
+
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
+      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+        <Button
+          onClick={() => setOpenCartSheet(true)}
+          className="relative"
+          variant="ouline"
+          size="icon"
+        >
+          <ShoppingCart className="w-6 h-6 text-gray-700" />
+          <span className="absolute top-[-1px] right-[1px] bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+            0
+          </span>
+        </Button>
+        <UserCartWrapper
+          cartItems={
+            cartItems && cartItems.items && cartItems.items.length > 0
+              ? cartItems.items
+              : []
+          }
+        />
+      </Sheet>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="cursor-pointer bg-black">
