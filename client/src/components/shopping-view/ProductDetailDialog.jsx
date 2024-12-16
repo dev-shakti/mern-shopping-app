@@ -2,11 +2,12 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import { AvatarImage } from "@radix-ui/react-avatar";
+import {  } from "@radix-ui/react-avatar";
 import { StarIcon } from "lucide-react";
 import { Input } from "../ui/input";
 
 const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
+  console.log(productDetails)
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
@@ -34,7 +35,7 @@ const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
             </p>
             {productDetails.salePrice > 0 ? (
               <p className="text-2xl font-bold text-muted-foreground ">
-                {productDetails?.salePrice}
+                ${productDetails?.salePrice}
               </p>
             ) : null}
           </div>
