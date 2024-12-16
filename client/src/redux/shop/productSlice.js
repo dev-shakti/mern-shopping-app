@@ -3,6 +3,7 @@ import axios from "axios";
 
 const initialState = {
   productList: [],
+  productDetails: null,
   isLoading: false,
 };
 
@@ -17,23 +18,45 @@ export const getFilterProducts = createAsyncThunk(
   }
 );
 
+export const fetchProductDetails = createAsyncThunk(
+  "/products/fetchProductDetails",
+  async (id) => {
+    const results = await axios.get(
+      `http://localhost:4415/api/shop/products/get/${id}`
+    );
+
+    return results?.data;
+  }
+);
+
 const shoppingProductSlice = createSlice({
   name: "shoppingProducts",
   initialState,
   reducers: () => {},
   extraReducers: (builders) => {
     builders
-    .addCase(getFilterProducts.pending,(state) => {
-        state.isLoading=true;
-    })
-    .addCase(getFilterProducts.fulfilled,(state,action) => {
-        state.isLoading=false;
-        state.productList=action.payload.data;
-    })
-    .addCase(getFilterProducts.rejected,(state) => {
-        state.isLoading=false;
-        state.productList=[];
-    })
+      .addCase(getFilterProducts.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getFilterProducts.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.productList = action.payload.data;
+      })
+      .addCase(getFilterProducts.rejected, (state) => {
+        state.isLoading = false;
+        state.productDetails =null;
+      })
+      .addCase(fetchProductDetails.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchProductDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.productDetails = action.payload.data;
+      })
+      .addCase(fetchProductDetails.rejected, (state) => {
+        state.isLoading = false;
+        state.productDetails = null;
+      });
   },
 });
 

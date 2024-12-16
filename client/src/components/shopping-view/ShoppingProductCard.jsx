@@ -1,10 +1,11 @@
+
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 
-const ShoppingProductCard = ({ product }) => {
+const ShoppingProductCard = ({ product, handleGetProductDetails,}) => {
   return (
-    <Card className="w-full max-w-sm mx-auto shadow-lg hover:shadow-xl cursor-pointer rounded-lg">
-      <div>
+  <Card className="w-full max-w-sm mx-auto shadow-lg hover:shadow-xl cursor-pointer rounded-lg">
+      <div onClick={() =>handleGetProductDetails(product?._id)}>
         <img
           src={product?.image}
           alt={product?.title}
@@ -44,6 +45,7 @@ const ShoppingProductCard = ({ product }) => {
         <Button className="bg-orange-400 hover:bg-orange-500 w-full">Add To Cart</Button>
       </CardFooter>
     </Card>
+  
   );
 };
 

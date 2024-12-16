@@ -1,19 +1,32 @@
+import ProductDetailDialog from "@/components/shopping-view/ProductDetailDialog";
 import ProductFilter from "@/components/shopping-view/ProductFilter";
 import ShoppingProductCard from "@/components/shopping-view/ShoppingProductCard";
 import { Button } from "@/components/ui/button";
-import { DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
-import { getFilterProducts } from "@/redux/shop/productSlice";
-import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import {
+  fetchProductDetails,
+  getFilterProducts,
+} from "@/redux/shop/productSlice";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
 import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const ShopListing = () => {
-
-  const [sort,setSort]=useState(null)
+  const [sort, setSort] = useState(null);
+  const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const dispatch = useDispatch();
-  const { productList } = useSelector((state) => state.shoppingProducts);
+  const { productList, productDetails } = useSelector(
+    (state) => state.shoppingProducts
+  );
 
   useEffect(() => {
     dispatch(getFilterProducts())
@@ -25,9 +38,24 @@ const ShopListing = () => {
       });
   }, [dispatch]);
 
+  useEffect(() => {
+    console.log("Product details:", productDetails);
+    if(productDetails!==null) setOpenDetailsDialog(true)
+  }, [productDetails]);
+
   const handleSort = (value) => {
-    setSort(value)
-  }
+    setSort(value);
+  };
+
+  const handleGetProductDetails = (getCurrentProductId) => {
+    dispatch(fetchProductDetails(getCurrentProductId))
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div className="w-full px-4 py-12 ">
@@ -44,23 +72,30 @@ const ShopListing = () => {
                 </span>
                 <DropdownMenu>
                   <DropdownMenuTrigger>
-                    <Button variant="outline" size="sm"  className="flex items-center gap-1">
-                      <ArrowUpDownIcon className="w-4 h-4"/>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-1"
+                    >
+                      <ArrowUpDownIcon className="w-4 h-4" />
                       Sort By
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-[200px]">
-                  <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
-                  {sortOptions.map((sortItem) => (
-                    <DropdownMenuRadioItem
-                      value={sortItem.id}
-                      key={sortItem.id}
-                      className="cursor-pointer"
+                    <DropdownMenuRadioGroup
+                      value={sort}
+                      onValueChange={handleSort}
                     >
-                      {sortItem.label}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
+                      {sortOptions.map((sortItem) => (
+                        <DropdownMenuRadioItem
+                          value={sortItem.id}
+                          key={sortItem.id}
+                          className="cursor-pointer"
+                        >
+                          {sortItem.label}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -70,7 +105,11 @@ const ShopListing = () => {
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 space-y-4 md:space-y-0">
             {productList && productList.length > 0 ? (
               productList.map((product) => (
-                <ShoppingProductCard key={product._id} product={product} />
+                <ShoppingProductCard
+                  key={product._id}
+                  product={product}
+                  handleGetProductDetails={handleGetProductDetails}
+                />
               ))
             ) : (
               <span className="text-xl text-red-500 font-semibold text-center ">
@@ -78,6 +117,11 @@ const ShopListing = () => {
               </span>
             )}
           </div>
+          <ProductDetailDialog
+            open={openDetailsDialog}
+            setOpen={setOpenDetailsDialog}
+            productDetails={productDetails}
+          />
         </div>
       </div>
     </div>
