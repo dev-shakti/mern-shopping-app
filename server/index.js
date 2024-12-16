@@ -6,6 +6,7 @@ const { connectToDb } = require("./db/db");
 const authRoute = require("./routes/auth.route");
 const adminProductRoute=require("./routes/admin/product.route")
 const shopProductRoute=require("./routes/shop/product.route")
+const cartRoute=require("./routes/shop/cart.route")
 dotenv.config();
 
 const app = express();
@@ -36,6 +37,7 @@ app.use(
 app.use("/api/auth", authRoute);
 app.use("/api/admin/products", adminProductRoute);
 app.use("/api/shop/products", shopProductRoute);
+app.use("/api/shop/cart", cartRoute);
 
 app.listen(port, () => {
   console.log(`App is running on port: ${port}`);

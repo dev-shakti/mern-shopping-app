@@ -64,7 +64,7 @@ const fetchCartItems = async (req, res) => {
     }
 
     // Fetch the user's cart and populate product details
-    const cart = await Cart.find({ userId }).populate({
+    const cart = await Cart.findOne({ userId }).populate({
       path: "items.productId",
       select: "image title price salePrice",
     });
@@ -184,3 +184,10 @@ const deleteCartItem = async (req, res) => {
     });
   }
 };
+
+module.exports={
+  addToCart,
+  fetchCartItems,
+  updateCartItem,
+  deleteCartItem
+}
