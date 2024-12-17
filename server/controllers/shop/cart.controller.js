@@ -58,7 +58,7 @@ const addToCart = async (req, res) => {
 const fetchCartItems = async (req, res) => {
   try {
     const { userId } = req.params;
-
+   
     if (!userId) {
       return res.status(400).json({ message: "User ID is required." });
     }
@@ -126,9 +126,15 @@ const updateCartItem = async (req, res) => {
       });
     }
 
-    cart.items[findCurrentProductIndex].quantity+=quantity
+    cart.items[findCurrentProductIndex].quantity=quantity
 
     await cart.save()
+
+    await cart.populate({
+      path: "items.productId",
+      select: "image title price salePrice",
+    });
+
     return res.status(200).json({
         success: true,
         message: "Product updated successfully",
@@ -171,6 +177,12 @@ const deleteCartItem = async (req, res) => {
     );
 
     await cart.save();
+
+    await cart.populate({
+      path: "items.productId",
+      select: "image title price salePrice",
+    });
+    
     return res.status(200).json({
       success: true,
       message: "Product deleted successfully",

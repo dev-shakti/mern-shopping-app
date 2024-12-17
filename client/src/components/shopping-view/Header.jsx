@@ -41,6 +41,16 @@ function HeaderRightContent() {
   const { cartItems } = useSelector((state) => state.shoppingCart);
   const dispatch = useDispatch();
 
+  const totalQuantity =
+    cartItems &&
+    cartItems.items &&
+    cartItems.items.length > 0 &&
+    cartItems.items
+      ?.reduce((acc, currentItem) => {
+        return acc + Number(currentItem?.quantity || 0);
+      }, 0)
+      
+  
   function handleLogout() {
     dispatch(logoutUser())
       .then((data) => {
@@ -50,8 +60,10 @@ function HeaderRightContent() {
   }
 
   useEffect(() => {
-    dispatch(fetchCartItems(user?.id));
-  }, [dispatch, user?.id]);
+    if (user.id) {
+      dispatch(fetchCartItems(user.id));
+    }
+  }, [dispatch, user.id]);
 
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
@@ -64,7 +76,7 @@ function HeaderRightContent() {
         >
           <ShoppingCart className="w-6 h-6 text-gray-700" />
           <span className="absolute top-[-1px] right-[1px] bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
-            0
+            {totalQuantity || "0"}
           </span>
         </Button>
         <UserCartWrapper

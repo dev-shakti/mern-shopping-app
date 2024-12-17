@@ -25,11 +25,10 @@ export const addToCart = createAsyncThunk(
 
   export const fetchCartItems = createAsyncThunk(
     "cart/fetchCartItems",
-    async ({ userId }) => {
+    async (userId) => {
       const response = await axios.get(
-        `http://localhost:5000/api/shop/cart/${userId}`,
+        `http://localhost:4415/api/shop/cart/get/${userId}`,
       );
-  
       return response.data;
     }
   );
@@ -38,7 +37,7 @@ export const addToCart = createAsyncThunk(
     "cart/deleteCartItem",
     async ({ userId, productId }) => {
       const response = await axios.delete(
-        `http://localhost:5000/api/shop/cart/${userId}/${productId}`,
+        `http://localhost:4415/api/shop/cart/${userId}/${productId}`,
       );
   
       return response.data;
@@ -48,8 +47,9 @@ export const addToCart = createAsyncThunk(
   export const updateCartItem = createAsyncThunk(
     "cart/updateCartItem",
     async ({ userId, productId, quantity }) => {
+      
       const response = await axios.put(
-        "http://localhost:5000/api/shop/cart/update-cart",
+        "http://localhost:4415/api/shop/cart/update-cart",
         {
           userId,
           productId,
@@ -62,7 +62,7 @@ export const addToCart = createAsyncThunk(
   );
 
 const shoppingCartSlice=createSlice({
-   name:"shppingCart",
+   name:"shoppingCart",
    initialState,
    reducers:{},
    extraReducers:(builders) => {
@@ -73,6 +73,9 @@ const shoppingCartSlice=createSlice({
         state.cartItems=action.payload.data
     }).addCase(addToCart.rejected,(state) => {
         state.isLoading=false;
+        state.cartItems=[];
+
+    //fetch cartitems
     }).addCase(fetchCartItems.pending,(state) => {
         state.isLoading=true;
     }).addCase(fetchCartItems.fulfilled,(state,action) => {
@@ -80,6 +83,9 @@ const shoppingCartSlice=createSlice({
         state.cartItems=action.payload.data
     }).addCase(fetchCartItems.rejected,(state) => {
         state.isLoading=false;
+        state.cartItems=[];
+
+    //update cart item
     }).addCase(updateCartItem.pending,(state) => {
         state.isLoading=true;
     }).addCase(updateCartItem.fulfilled,(state,action) => {
@@ -87,6 +93,9 @@ const shoppingCartSlice=createSlice({
         state.cartItems=action.payload.data
     }).addCase(updateCartItem.rejected,(state) => {
         state.isLoading=false;
+        state.cartItems=[];
+
+    //delete cart item
     }).addCase(deleteCartItem.pending,(state) => {
         state.isLoading=true;
     }).addCase(deleteCartItem.fulfilled,(state,action) => {
@@ -94,6 +103,7 @@ const shoppingCartSlice=createSlice({
         state.cartItems=action.payload.data
     }).addCase(deleteCartItem.rejected,(state) => {
         state.isLoading=false;
+        state.cartItems=[];
     })
    }
 })

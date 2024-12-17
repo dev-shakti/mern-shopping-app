@@ -29,17 +29,11 @@ const ShopListing = () => {
   const { productList, productDetails } = useSelector(
     (state) => state.shoppingProducts
   );
-
+  const { cartItems } = useSelector((state) => state.shoppingCart);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getFilterProducts())
-      .then((data) => {
-        //console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    dispatch(getFilterProducts());
   }, [dispatch]);
 
   useEffect(() => {
@@ -51,16 +45,21 @@ const ShopListing = () => {
   };
 
   const handleGetProductDetails = (getCurrentProductId) => {
-    dispatch(fetchProductDetails(getCurrentProductId))
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    dispatch(fetchProductDetails(getCurrentProductId));
   };
 
   const handleAddToCart = (getCurrentProductId) => {
+    //Check if product already exists in cart
+    const isProductInCart = cartItems?.items?.some(
+      (item) => item.productId?._id === getCurrentProductId
+    );
+
+    if (isProductInCart) {
+      toast.info("This product is already in your cart!");
+      return;
+    }
+
+    // Dispatch addToCart action if product is not in cart
     dispatch(
       addToCart({
         userId: user?.id,
@@ -69,9 +68,9 @@ const ShopListing = () => {
       })
     )
       .then((data) => {
-        if(data?.payload?.success){
-          dispatch(fetchCartItems({userId: user?.id}))
-          toast.success(data.payload.message)
+        if (data?.payload?.success) {
+          dispatch(fetchCartItems(user?.id));
+          toast.success(data.payload.message);
         }
       })
       .catch((error) => {
