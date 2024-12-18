@@ -21,7 +21,7 @@ const addAddress = async (req, res) => {
       phone,
       notes,
     });
-
+  
     await newAddress.save();
 
     return res.status(201).json({
@@ -40,7 +40,7 @@ const addAddress = async (req, res) => {
 
 const getAllAddresses = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const { userId } = req.params;
 
     //check userId is exist or not
     if (!userId) {
@@ -70,7 +70,7 @@ const updateAddress = async (req, res) => {
   try {
     const { userId, addressId } = req.params;
     const formData = req.body;
-
+    
     if (!userId || !addressId) {
       return res.status(400).json({
         success: false,
@@ -78,22 +78,22 @@ const updateAddress = async (req, res) => {
       });
     }
 
-    const address = await Address.findOneAndUpdate(
+    const updatedAddress = await Address.findOneAndUpdate(
       { _id: addressId, userId },
-      formData,
+     formData,
       { new: true }
     );
-
-    if (!address) {
+    
+    if (!updatedAddress) {
         return res.status(404).json({
           success: false,
           message: "Address not found",
         });
       }
-
+   
     return  res.status(200).json({
         success: true,
-        data: address,
+        data: updatedAddress,
         message:"Address updated successfully"
       });
   } catch (error) {

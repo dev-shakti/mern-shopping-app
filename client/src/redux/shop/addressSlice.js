@@ -12,11 +12,8 @@ export const addAddress = createAsyncThunk(
      
       const response = await axios.post(
         "http://localhost:4415/api/shop/address/add",
-        {
-          formData
-        }
+        formData
       );
-      
       return response.data;
     }
   );
@@ -45,12 +42,9 @@ export const addAddress = createAsyncThunk(
   export const updateAddress = createAsyncThunk(
     "address/updateAddress",
     async ({ userId, addressId, formData }) => {
-      
       const response = await axios.put(
         `http://localhost:4415/api/shop/address/update/${userId}/${addressId}`,
-        {
-        formData
-        }
+        formData     
       );
   
       return response.data;
@@ -74,10 +68,10 @@ const addressSlice=createSlice({
         state.isLoading=true;
     }).addCase(fetchAllAddress.fulfilled,(state,action) => {
         state.isLoading=false;
-        state.addressList=action.payload.data
+        state. addressList=action.payload.data
     }).addCase(fetchAllAddress.rejected,(state) => {
         state.isLoading=false;
-        state.addressList=[];
+        state. addressList=[];
    })
    }
 })
