@@ -4,7 +4,7 @@ import { Navigate, useLocation } from "react-router-dom";
 const CheckAuth = ({ isAuthenticated, user, children, isLoading }) => {
   const location = useLocation();
   
-
+ 
   if (isLoading) {
     // Show a loading indicator or placeholder
     return <div>Loading...</div>;
@@ -42,7 +42,7 @@ const CheckAuth = ({ isAuthenticated, user, children, isLoading }) => {
 
   // Allow admins to access admin pages.
   if (isAuthenticated && user?.role === "admin" && location.pathname.includes("shop")) {
-    return <Navigate to="/admin/dashbaord" />;
+    return <Navigate to="/admin/dashboard" />;
   }
 
   // Render children if none of the above conditions are met.
