@@ -1,8 +1,11 @@
 import { SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import UserCartContent from "./UserCartContent";
 import { Button } from "../ui/button";
+import { useNavigate } from "react-router-dom";
 
 const UserCartWrapper = ({ cartItems }) => {
+  const navigate = useNavigate();
+
   const totalAmount = cartItems
     ?.reduce((acc, currentItem) => {
       return (
@@ -14,7 +17,7 @@ const UserCartWrapper = ({ cartItems }) => {
     ?.toFixed(2);
 
   return (
-    <SheetContent className="sm:max-w-md">
+    <SheetContent className="max-w-md">
       <SheetHeader>
         <SheetTitle>Your Cart</SheetTitle>
       </SheetHeader>
@@ -33,7 +36,10 @@ const UserCartWrapper = ({ cartItems }) => {
           <span className="font-bold">${totalAmount}</span>
         </div>
       </div>
-      <Button className="w-full bg-orange-300 hover:bg-orange-400 mt-6">
+      <Button
+        onClick={() => navigate("/shop/checkout")}
+        className="w-full bg-orange-300 hover:bg-orange-400 mt-6"
+      >
         Proceed To Checkout
       </Button>
     </SheetContent>

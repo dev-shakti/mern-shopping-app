@@ -1,6 +1,6 @@
 import { shoppingViewHeaderMenuItems } from "@/config";
 import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Label } from "../ui/label";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
@@ -40,6 +40,7 @@ function HeaderRightContent() {
   const [openCartSheet, setOpenCartSheet] = useState(false);
   const { cartItems } = useSelector((state) => state.shoppingCart);
   const dispatch = useDispatch();
+  const nagivate=useNavigate();
 
   const totalQuantity =
     cartItems &&
@@ -99,7 +100,7 @@ function HeaderRightContent() {
         <DropdownMenuContent className="w-48">
           <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => nagivate("/shop/account")}>
             <UserCog className="mr-2 h-4 w-4" />
             Account
           </DropdownMenuItem>
