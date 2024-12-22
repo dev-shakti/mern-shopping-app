@@ -8,6 +8,8 @@ const UserCartContent = ({ cartItem }) => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
+  
+  const salePrice=Number(cartItem?.productId?.salePrice)
   const quantity = Number(cartItem?.quantity);
   const price = Number(cartItem?.productId?.price);
 
@@ -87,7 +89,9 @@ const UserCartContent = ({ cartItem }) => {
       </div>
       {/* right */}
       <div className="flex flex-col gap-2">
-        <p className="font-semibold">${(price * quantity).toFixed(2)}</p>
+         <p className="font-semibold">
+            {salePrice>0 ? salePrice*quantity : price*quantity}
+         </p>
         <Button
           className=""
           variant="outline"

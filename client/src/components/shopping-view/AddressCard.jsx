@@ -5,9 +5,22 @@ const AddressCard = ({
   addressInfo,
   handleDeleteAddress,
   handleEditAddress,
+  currentSelectedAddress,
+  setCurrentSelectedAddress,
 }) => {
   return (
-    <Card className="shadow-lg border rounded-lg p-4 bg-white">
+    <Card
+    className={`${
+      currentSelectedAddress?._id === addressInfo?._id
+        ? "border-red-900 border-[4px]"
+        : "border-black"
+    } shadow-lg rounded-lg p-4 bg-white`}
+    onClick={() =>
+      setCurrentSelectedAddress
+        ? setCurrentSelectedAddress(addressInfo)
+        : null
+    }
+    >
       <CardContent className="space-y-2">
         <h2 className="text-lg font-semibold text-gray-700">Address Details</h2>
         <p className="text-sm text-gray-600">

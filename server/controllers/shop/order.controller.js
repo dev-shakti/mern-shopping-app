@@ -1,7 +1,9 @@
-const Order = require("../../models/order.model");
+const Order=require("../../models/orders.model")
 const Cart = require("../../models/cart.model");
 const product = require("../../models/product.model");
 const paypal=require("../../helper/paypal");
+const mongoose=require("mongoose")
+
 
 const createOrder = async (req, res) => {
   try {
@@ -19,7 +21,7 @@ const createOrder = async (req, res) => {
       payerId,
       cartId,
     } = req.body;
-
+  
     // Construct the PayPal payment JSON
     const create_payment_json = {
       intent: "sale",
@@ -36,14 +38,14 @@ const createOrder = async (req, res) => {
             items: cartItems.map((item) => ({
               name: item.title,
               sku: item.productId,
-              price: item.price.toFixed(2),
+              price: Number(item.price).toFixed(2),
               currency: "USD",
-              quantity: item.quantity,
+              quantity: Number(item.quantity),
             })),
           },
           amount: {
             currency: "USD",
-            total: totalAmount.toFixed(2),
+            total: Number(totalAmount).toFixed(2),
           },
           description: "description",
         },
@@ -109,7 +111,6 @@ const createOrder = async (req, res) => {
 const capturePayment = async (req, res) => {
   try {
     const { paymentId, payerId, orderId } = req.body;
-
     let order=await Order.findById(orderId)
 
     if(!order){
@@ -124,8 +125,12 @@ const capturePayment = async (req, res) => {
     order.paymentId=paymentId
     order.payerId=payerId
 
-    const getCartId=order.cartId
-    await Order.findByIdAndDelete(getCartId)
+   
+    const cartId = order.cartId;
+
+    // Delete the cart
+    await Cart.findByIdAndDelete(cartId);
+
 
     await order.save()
 

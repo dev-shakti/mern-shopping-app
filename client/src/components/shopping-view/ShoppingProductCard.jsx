@@ -6,6 +6,7 @@ const ShoppingProductCard = ({
   handleGetProductDetails,
   handleAddToCart,
 }) => {
+
   return (
     <Card className="w-full max-w-sm mx-auto shadow-lg hover:shadow-xl cursor-pointer rounded-lg">
       <div onClick={() => handleGetProductDetails(product?._id)}>

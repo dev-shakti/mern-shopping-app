@@ -1,27 +1,92 @@
 import Address from "@/components/shopping-view/Address";
 import UserCartContent from "@/components/shopping-view/UserCartContent";
 import { Button } from "@/components/ui/button";
+import { createNewOrder } from "@/redux/shop/orderSlice";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const ShoppingCheckout = () => {
   const [isPaymentStart, setIsPaymentStart] = useState(false);
   const { cartItems } = useSelector((state) => state.shoppingCart);
+  const { user } = useSelector((state) => state.auth);
+  const { approvalURL } = useSelector((state) => state.shoppingOrderSlice);
+  const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null);
+
+  const dispatch = useDispatch();
 
   const totalCartAmount =
-    cartItems && cartItems.items && cartItems.items.length > 0
-      ? cartItems.items
-          .reduce((acc, currentItem) => {
-            return (
-              acc +
-              Number(currentItem?.productId?.price || 0) *
-                Number(currentItem?.quantity || 0)
-            );
-          }, 0)
-          ?.toFixed(2)
-      : null;
+  cartItems && cartItems.items && cartItems.items.length > 0
+    ? cartItems.items
+        .reduce((acc, currentItem) => {
+          // Extract salePrice, price, and quantity
+          const salePrice = Number(currentItem?.productId?.salePrice);
+          const price = Number(currentItem?.productId?.price);
+          const quantity = Number(currentItem?.quantity);
 
-  const handleInitiatePaypalPayment = () => {};
+          // Use salePrice if it's greater than 0; otherwise, fallback to price
+          const itemTotal = (salePrice > 0 ? salePrice : price) * quantity;
+
+          // Accumulate the total
+          return acc + itemTotal;
+        }, 0)
+        ?.toFixed(2)
+    : null;
+
+  const handleInitiatePaypalPayment = () => {
+    if (currentSelectedAddress === null) {
+      toast.error("Must select one address to proceed for payment");
+      return;
+    }
+
+    const orderData = {
+      userId: user?.id,
+      cartItems: cartItems.items.map((item) => ({
+        productId: item?.productId,
+        title: item?.productId?.title,
+        image: item?.productId?.image,
+        price:
+          Number(item?.productId?.salePrice) > 0
+            ? Number(item?.productId?.salePrice)
+            : Number(item?.productId?.price),
+        quantity: Number(item?.quantity),
+      })),
+      addressInfo: {
+        addressId: currentSelectedAddress?._id,
+        address: currentSelectedAddress?.address,
+        city: currentSelectedAddress?.city,
+        phone: currentSelectedAddress?.phone,
+        pincode: currentSelectedAddress?.pincode,
+        notes: currentSelectedAddress?.notes,
+      },
+      orderStatus: "pending",
+      paymentMethod: "paypal",
+      paymentStatus: "pending",
+      totalAmount: Number(totalCartAmount),
+      orderDate: new Date(),
+      orderUpdateDate: new Date(),
+      paymentId: "",
+      payerId: "",
+      cartId: cartItems?._id,
+    };
+   
+    dispatch(createNewOrder(orderData))
+      .then((data) => {
+        console.log(data, "hello");
+         if(data?.payload?.success){
+          setIsPaymentStart(true)
+         }else{
+          setIsPaymentStart(false)
+         }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  if (approvalURL) {
+    window.location.href = approvalURL;
+  }
 
   return (
     <div className="flex flex-col">
@@ -32,7 +97,10 @@ const ShoppingCheckout = () => {
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5 p-5 px-4 md:px-6">
-        <Address />
+        <Address
+          currentSelectedAddress={currentSelectedAddress}
+          setCurrentSelectedAddress={setCurrentSelectedAddress}
+        />
 
         <div className="flex flex-col gap-4">
           {cartItems && cartItems.items && cartItems.items.length > 0

@@ -8,11 +8,14 @@ const UserCartWrapper = ({ cartItems }) => {
 
   const totalAmount = cartItems
     ?.reduce((acc, currentItem) => {
-      return (
-        acc +
-        Number(currentItem?.productId?.price || 0) *
-          Number(currentItem?.quantity || 0)
-      );
+      const salePrice = Number(currentItem?.productId?.salePrice);
+      const quantity = Number(currentItem?.quantity);
+      const price = Number(currentItem?.productId?.price);
+
+      // Use salePrice if it's greater than 0; otherwise, fallback to price
+      const itemTotal = (salePrice > 0 ? salePrice : price) * quantity;
+
+      return acc + itemTotal;
     }, 0)
     ?.toFixed(2);
 
