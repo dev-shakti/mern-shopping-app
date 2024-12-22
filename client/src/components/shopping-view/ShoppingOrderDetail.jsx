@@ -1,31 +1,46 @@
+import { getOrderDetails } from "@/redux/shop/orderSlice";
 import { DialogContent } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-const ShoppingOrderDetail = () => {
+const ShoppingOrderDetail = ({ orderId }) => {
+  const { orderDetails } = useSelector((state) => state.shoppingOrderSlice);
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getOrderDetails(orderId))
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => console.log(err));
+  }, [dispatch, orderId]);
+
   return (
     <DialogContent className="sm:max-w-[600px]">
       <div className="grid gap-6">
         <div className="grid gap-2">
           <div className="flex mt-6 items-center justify-between">
             <p className="font-semibold text-sm">Order ID</p>
-            <Label>753292433492</Label>
+            <Label>{orderDetails?._id}</Label>
           </div>
           <div className="flex mt-2 items-center justify-between">
             <p className="font-semibold text-sm">Order Date</p>
-            <Label>23.09.24</Label>
+            <Label>{orderDetails?.orderDate.split("T")[0]}</Label>
           </div>
           <div className="flex mt-2 items-center justify-between">
             <p className="font-semibold text-sm">Order Price</p>
-            <Label>$3490</Label>
+            <Label>${orderDetails?.totalAmount}</Label>
           </div>
           <div className="flex mt-2 items-center justify-between">
             <p className="font-semibold text-sm">Payment method</p>
-            <Label>Paid</Label>
+            <Label>{orderDetails?.paymentMethod}</Label>
           </div>
           <div className="flex mt-2 items-center justify-between">
             <p className="font-semibold text-sm">Payment Status</p>
-            <Label>Confirmed</Label>
+            <Label>{orderDetails?.paymentStatus}</Label>
           </div>
           <div className="flex mt-2 items-center justify-between">
             <p className="font-semibold text-sm">Order Status</p>
@@ -41,7 +56,7 @@ const ShoppingOrderDetail = () => {
               >
                 Pending
               </Badge> */}
-              Pending
+              {orderDetails?.orderStatus}
             </Label>
           </div>
         </div>
@@ -52,13 +67,13 @@ const ShoppingOrderDetail = () => {
             <ul className="grid gap-3">
               <li className="flex items-center justify-between">
                 <p className="text-sm">
-                  <strong>Title: </strong>Title
+                  <strong>Title: </strong>
                 </p>
                 <p className=" text-sm">
                   <strong>Quantity: </strong>Quantity
                 </p>
                 <p className=" text-sm">
-                  <strong>Price:</strong>Price
+                  <strong>Price:</strong>{orderDetails?.totalAmount}
                 </p>
               </li>
             </ul>
@@ -69,22 +84,28 @@ const ShoppingOrderDetail = () => {
             <p className="font-medium">Shipping Info</p>
             <div className="grid gap-0.5">
               <p className=" text-sm">
-                <strong>Username: </strong>John Doe
+                <strong>User Email: </strong>
+                {user?.email}
               </p>
               <p className=" text-sm">
-                <strong>Address: </strong>Mumbai, Maharastra
+                <strong>Address: </strong>
+                {orderDetails?.addressInfo?.address}
               </p>
               <p className=" text-sm">
-                <strong>City: </strong>Mumbai
+                <strong>City: </strong>
+                {orderDetails?.addressInfo?.city}
               </p>
               <p className=" text-sm">
-                <strong>Pincode: </strong>878456
+                <strong>Pincode: </strong>
+                {orderDetails?.addressInfo?.pincode}
               </p>
               <p className=" text-sm">
-                <strong>Phone: </strong>9145678923
+                <strong>Phone: </strong>
+                {orderDetails?.addressInfo?.phone}
               </p>
               <p className=" text-sm">
-                <strong>Notes: </strong>lorem ipsum
+                <strong>Notes: </strong>
+                {orderDetails?.addressInfo?.notes}
               </p>
             </div>
           </div>

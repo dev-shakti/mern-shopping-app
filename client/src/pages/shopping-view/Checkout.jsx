@@ -39,6 +39,11 @@ const ShoppingCheckout = () => {
       return;
     }
 
+    if (cartItems.length===0) {
+      toast.error("Your cart is empty. Please add items to proceed");
+      return;
+    }
+
     const orderData = {
       userId: user?.id,
       cartItems: cartItems.items.map((item) => ({
