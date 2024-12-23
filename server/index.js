@@ -5,6 +5,8 @@ const dotenv = require("dotenv");
 const { connectToDb } = require("./db/db");
 const authRoute = require("./routes/auth.route");
 const adminProductRoute=require("./routes/admin/product.route")
+const adminOrderRoute=require("./routes/admin/order.route")
+
 const shopProductRoute=require("./routes/shop/product.route")
 const cartRoute=require("./routes/shop/cart.route")
 const addressRoute=require("./routes/shop/address.route")
@@ -37,7 +39,10 @@ app.use(
 
 //routes
 app.use("/api/auth", authRoute);
+
 app.use("/api/admin/products", adminProductRoute);
+app.use("/api/admin/orders", adminOrderRoute);
+
 app.use("/api/shop/products", shopProductRoute);
 app.use("/api/shop/cart", cartRoute);
 app.use("/api/shop/address", addressRoute);
