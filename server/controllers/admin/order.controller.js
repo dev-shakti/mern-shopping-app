@@ -55,7 +55,45 @@ const getOrderDetailsByAdmin = async (req, res) => {
   }
 };
 
+
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {orderStatus}=req.body;
+
+     // Find the order by ID
+     const order = await Order.findById(id);
+
+     // Check if the order exists
+     if (!order) {
+       return res.status(404).json({
+         success: false,
+         message: "No order found",
+       });
+     }
+ 
+     // Update the order status
+     order.orderStatus = orderStatus;
+ 
+     // Save the updated order
+     await order.save();
+
+    return res.status(200).json({
+      success: true,
+      data:order,
+      message:"Order status updated successfully"
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Some error occured!",
+    });
+  }
+};
+
 module.exports={
     getAllOrdersByAdmin,
-    getOrderDetailsByAdmin
+    getOrderDetailsByAdmin,
+    updateOrderStatus
 }
