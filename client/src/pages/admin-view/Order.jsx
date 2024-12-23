@@ -1,9 +1,10 @@
+import AdminOrderView from "@/components/admin/AdminOrderView"
 
 const AdminOrder = () => {
   return (
-    <div>
-      Admin order
-    </div>
+    <>
+     <AdminOrderView/>
+    </>
   )
 }
 
