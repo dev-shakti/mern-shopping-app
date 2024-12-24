@@ -6,40 +6,70 @@ import {} from "@radix-ui/react-avatar";
 import { StarIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import StarRating from "../common/StarRating";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addProductReview } from "@/redux/shop/productReviewSlice";
+import {
+  addProductReview,
+  getProductReviews,
+} from "@/redux/shop/productReviewSlice";
+import { toast } from "sonner";
 
 const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
+  const [reviewMessage, setReviewMessage] = useState("");
+  const [rating, setRating] = useState(0);
+  const { user } = useSelector((state) => state.auth);
+  const { reviews } = useSelector((state) => state.productReview);
+  const dispatch = useDispatch();
 
-  const [reviewMessage,setReviewMessage]=useState('');
-  const [rating,setRating]=useState(0);
-  const {user}=useSelector((state) =>state.auth)
-  const dispatch=useDispatch();
-
+  const price=Number(productDetails?.price)
+  const salePrice=Number(productDetails?.salePrice)
+ 
   const addReview = () => {
-    dispatch(addProductReview({
-      productId:productDetails?.id,
-      userId:user?.id,
-      userName:user?.userName, 
-      reviewMessage:reviewMessage, 
-      reviewValue:rating
-    })).then((data) => {
-      console.log(data)
-    }).catch((err) => {
-      console.log(err)
-    })
-  }
+    dispatch(
+      addProductReview({
+        productId: productDetails?._id,
+        userId: user?.id,
+        userName: user?.userName,
+        reviewMessage: reviewMessage,
+        reviewValue: rating,
+      })
+    )
+      .then((data) => {
+        console.log(data);
+        if (data?.payload?.success) {
+          setRating(0);
+          setReviewMessage("");
+          dispatch(getProductReviews(productDetails?._id));
+          toast.success(data?.payload?.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleRatingChange = (getRating) => {
-    setRating(getRating)
-  }
+    setRating(getRating);
+  };
 
   const handleDialogClose = () => {
-    setRating(0)
-    setReviewMessage("")
-    setOpen(false)
-  }
+    setRating(0);
+    setReviewMessage("");
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (productDetails !== null) {
+      dispatch(getProductReviews(productDetails?._id));
+    }
+  }, [dispatch, productDetails]);
+
+  const averageReview =
+  reviews && reviews.length > 0
+    ? reviews.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) /
+      reviews.length
+    : 0;
+
 
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
@@ -58,51 +88,67 @@ const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
           <p className="text-muted-foreground text-2xl mt-2">
             {productDetails?.description}
           </p>
-          {/* <div className="flex justify-between items-center mt-4">
+          <div className="flex justify-between items-center mt-4">
             <p
               className={`text-3xl font-bold text-primary ${
-                productDetails?.salePrice > 0 ? "line-through" : ""
+                salePrice > 0 ? "line-through" : ""
               }`}
             >
-              ${productDetails?.price}
+              ${price}
             </p>
-            {productDetails.salePrice > 0 ? (
+            {salePrice > 0 ? (
               <p className="text-2xl font-bold text-muted-foreground ">
-                ${productDetails?.salePrice}
+                ${salePrice}
               </p>
             ) : null}
-          </div> */}
-          <div className="flex items-start gap-1 mt-4 mb-2">
-          <StarRating/>
+          </div>
+          <div className="flex items-center gap-1 mt-4 mb-2">
+            <StarRating rating={averageReview}/>
+            <span className="text-muted-foreground">
+              ({averageReview.toFixed(2)})
+            </span>
           </div>
           <Separator />
           <Button className="w-full mt-4 bg-orange-400 hover:bg-orange-500">
             Add To Cart
           </Button>
-          <div className="max-h-[300px] overflow-auto mt-4">
-            <div>
-              <h2 className="text-xl font-bold mb-4">Reviews</h2>
-              <div className="flex gap-4">
-                <Avatar className="w-10 h-10 border">
-                  <AvatarFallback>SM</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col gap-2">
-                  <h3 className="text-xl font-bold">John Doe</h3>
-                  <div className="flex items-start gap-1">
-                  <StarRating/>
+          <div className="max-h-[230px] overflow-auto mt-4">
+            {reviews && reviews.length > 0 ? (
+              reviews.map((review) => (
+                <div key={review._id}>
+                  <h2 className="text-xl font-bold mb-4">Reviews</h2>
+                  <div className="flex gap-4">
+                    <Avatar className="w-10 h-10 border">
+                      <AvatarFallback>
+                      {review?.userName[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-xl font-bold">{review?.userName}</h3>
+                      <div className="flex items-start gap-1">
+                        <StarRating rating={review?.reviewValue} />
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {review?.reviewMessage}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    This is an amazing product
-                  </p>
                 </div>
-              </div>
-            </div>
+              ))
+            ) : (
+              <span className="text-sm font-light text-red-500">
+                Reviews not found
+              </span>
+            )}
           </div>
           <div className="flex flex-col mt-4">
             <div>
               <h4 className="font-bold text-lg">Write a review</h4>
               <div className="flex items-start gap-1">
-               <StarRating rating={rating} handleRatingChange={handleRatingChange}/>
+                <StarRating
+                  rating={rating}
+                  handleRatingChange={handleRatingChange}
+                />
               </div>
             </div>
             <div className="flex gap-2 mt-4">
@@ -113,7 +159,10 @@ const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
                 value={reviewMessage}
                 onChange={(e) => setReviewMessage(e.target.value)}
               />
-              <Button onClick={addReview} className="bg-orange-400 hover:bg-orange-500">
+              <Button
+                onClick={addReview}
+                className="bg-orange-400 hover:bg-orange-500"
+              >
                 Submit
               </Button>
             </div>

@@ -6,7 +6,7 @@ const addProductReview = async (req, res) => {
   try {
     const { userId, productId, userName, reviewMessage, reviewValue } =
       req.body;
-
+      
     const order = await Order.findOne({
       userId,
       "cartItems.productId": productId,
@@ -40,7 +40,7 @@ const addProductReview = async (req, res) => {
     });
 
     await newReview.save();
-
+    console.log(newReview.userName)
     const reviews = await ProductReview.find({ productId });
     const totalReviewsLength = reviews.length;
     const averageReview =
@@ -66,6 +66,7 @@ const addProductReview = async (req, res) => {
 const getProductReviews = async (req, res) => {
   try {
    const { productId } = req.params;
+
    const reviews=await ProductReview.find({productId})
 
    if(reviews.length===0){

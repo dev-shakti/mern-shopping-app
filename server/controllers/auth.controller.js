@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res) => {
   const { userName, email, password } = req.body;
-  
+
   //validation
   if (!email || !password || !userName) {
     return res.status(400).json({
@@ -69,7 +69,12 @@ const loginUser = async (req, res) => {
 
     //create token
     const token = jwt.sign(
-      { id: user._id, role: user.role, email: user.email },
+      {
+        id: user._id,
+        role: user.role,
+        email: user.email,
+        userName: user?.userName,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -79,6 +84,7 @@ const loginUser = async (req, res) => {
       _id: user._id,
       email: user.email,
       role: user.role,
+      userName: user?.userName,
     };
 
     //set cookie and return success reponse with user
@@ -106,7 +112,6 @@ const logoutUser = async (req, res) => {
 };
 
 const verifyUser = async (req, res) => {
- 
   try {
     const user = req.user;
     res.status(200).json({
