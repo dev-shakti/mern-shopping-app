@@ -2,14 +2,47 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import {  } from "@radix-ui/react-avatar";
+import {} from "@radix-ui/react-avatar";
 import { StarIcon } from "lucide-react";
 import { Input } from "../ui/input";
+import StarRating from "../common/StarRating";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addProductReview } from "@/redux/shop/productReviewSlice";
 
 const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
-  
+
+  const [reviewMessage,setReviewMessage]=useState('');
+  const [rating,setRating]=useState(0);
+  const {user}=useSelector((state) =>state.auth)
+  const dispatch=useDispatch();
+
+  const addReview = () => {
+    dispatch(addProductReview({
+      productId:productDetails?.id,
+      userId:user?.id,
+      userName:user?.userName, 
+      reviewMessage:reviewMessage, 
+      reviewValue:rating
+    })).then((data) => {
+      console.log(data)
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
+
+  const handleRatingChange = (getRating) => {
+    setRating(getRating)
+  }
+
+  const handleDialogClose = () => {
+    setRating(0)
+    setReviewMessage("")
+    setOpen(false)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
         <div className="relative overflow-hidden rounded-lg">
           <img
@@ -40,14 +73,10 @@ const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
             ) : null}
           </div> */}
           <div className="flex items-start gap-1 mt-4 mb-2">
-            <StarIcon className="w-5 h-5 fill-primary" />
-            <StarIcon className="w-5 h-5 fill-primary" />
-            <StarIcon className="w-5 h-5 fill-primary" />
-            <StarIcon className="w-5 h-5 fill-primary" />
-            <StarIcon className="w-5 h-5 fill-primary" />
+          <StarRating/>
           </div>
           <Separator />
-          <Button className="w-full mt-4 bg-orange-300 hover:bg-orange-400">
+          <Button className="w-full mt-4 bg-orange-400 hover:bg-orange-500">
             Add To Cart
           </Button>
           <div className="max-h-[300px] overflow-auto mt-4">
@@ -60,11 +89,7 @@ const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
                 <div className="flex flex-col gap-2">
                   <h3 className="text-xl font-bold">John Doe</h3>
                   <div className="flex items-start gap-1">
-                    <StarIcon className="w-5 h-5 fill-primary" />
-                    <StarIcon className="w-5 h-5 fill-primary" />
-                    <StarIcon className="w-5 h-5 fill-primary" />
-                    <StarIcon className="w-5 h-5 fill-primary" />
-                    <StarIcon className="w-5 h-5 fill-primary" />
+                  <StarRating/>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     This is an amazing product
@@ -73,15 +98,25 @@ const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
               </div>
             </div>
           </div>
-          <div className="flex gap-2 mt-4">
-            <Input
-              type="text"
-              placeholder="Write a review"
-              className="w-full"
-            />
-            <Button className="bg-orange-300 hover:bg-orange-400">
-              Submit
-            </Button>
+          <div className="flex flex-col mt-4">
+            <div>
+              <h4 className="font-bold text-lg">Write a review</h4>
+              <div className="flex items-start gap-1">
+               <StarRating rating={rating} handleRatingChange={handleRatingChange}/>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <Input
+                type="text"
+                placeholder="Write a review"
+                className="w-full"
+                value={reviewMessage}
+                onChange={(e) => setReviewMessage(e.target.value)}
+              />
+              <Button onClick={addReview} className="bg-orange-400 hover:bg-orange-500">
+                Submit
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>

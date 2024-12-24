@@ -3,7 +3,7 @@ const Product=require("../../models/product.model")
 
 const searchProducts = async(req,res) => {
     try {
-        const {keyword}=req.body
+        const {keyword}=req.params
 
         if(!keyword || typeof keyword !=="string"){
             return res.status(404).json({
