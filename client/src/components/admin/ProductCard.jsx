@@ -47,7 +47,6 @@ const ProductCard = ({
           variant="outline"
           className="px-3 py-1"
           onClick={() => {
-            console.log("clicked");
             setOpenCreateProductsDialog(true);
             setFormData(product);
             setSelectedItemId(product._id);

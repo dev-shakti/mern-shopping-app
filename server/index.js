@@ -11,6 +11,8 @@ const shopProductRoute=require("./routes/shop/product.route")
 const cartRoute=require("./routes/shop/cart.route")
 const addressRoute=require("./routes/shop/address.route")
 const orderRoute=require("./routes/shop/order.route")
+const reviewRoute=require("./routes/shop/productReview.route")
+const searchRoute=require("./routes/shop/searchProducts.route")
 dotenv.config();
 
 const app = express();
@@ -47,6 +49,8 @@ app.use("/api/shop/products", shopProductRoute);
 app.use("/api/shop/cart", cartRoute);
 app.use("/api/shop/address", addressRoute);
 app.use("/api/shop/order", orderRoute);
+app.use("/api/shop/review", reviewRoute);
+app.use("/api/shop/search", searchRoute);
 
 app.listen(port, () => {
   console.log(`App is running on port: ${port}`);

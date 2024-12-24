@@ -41,6 +41,11 @@ const AdminProducts = () => {
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
 
+
+  useEffect(() => {
+    dispatch(fetchAllProducts());
+  }, [dispatch]);
+
   function isFormValid() {
     return Object.keys(formData)
       .map((key) => formData[key] !== "")
@@ -56,7 +61,6 @@ const AdminProducts = () => {
       ? dispatch(editProduct({ formData, id: selectedItemId }))
           .then((data) => {
             if (data?.payload?.success) {
-              console.log(data.payload);
               dispatch(fetchAllProducts());
               setFormData(initialState);
               setOpenCreateProductsDialog(false);
@@ -75,9 +79,11 @@ const AdminProducts = () => {
       : dispatch(addNewProduct({ ...updatedData }))
           .then((data) => {
             if (data?.payload?.success) {
+              console.log(data.payload)
               dispatch(fetchAllProducts());
-              setFormData(initialState);
               setOpenCreateProductsDialog(false);
+              setImageFile(null);
+              setFormData(initialState);
               toast.success(data.payload.message);
             }
           })
@@ -90,10 +96,6 @@ const AdminProducts = () => {
             );
           });
   };
-
-  useEffect(() => {
-    dispatch(fetchAllProducts());
-  }, [dispatch]);
 
   function handleDelete(id) {
     dispatch(deleteProduct(id))
@@ -110,14 +112,16 @@ const AdminProducts = () => {
         );
       });
   }
+
+ console.log(openCreateProductsDialog,imageFile,selectedItemId)
   return (
     <Fragment>
       <div className="mb-5 w-full flex justify-end">
-        <Button onClick={() => setOpenCreateProductsDialog(true)}>
+        <Button className="bg-orange-400 hover:bg-orange-500" onClick={() => setOpenCreateProductsDialog(true)}>
           Add New Product
         </Button>
       </div>
-      <div className="grid gap-4 md:grid-col-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
         {productList && productList.length > 0
           ? productList.map((product) => (
               <ProductCard
@@ -135,6 +139,8 @@ const AdminProducts = () => {
         open={openCreateProductsDialog}
         onOpenChange={() => {
           setOpenCreateProductsDialog(false);
+          setSelectedItemId(null);
+          setFormData(initialState);
         }}
       >
         <SheetContent side="right" className="overflow-auto">

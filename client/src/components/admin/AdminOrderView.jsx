@@ -18,6 +18,14 @@ import {
 } from "@/redux/admin/orderSlice";
 import { Badge } from "../ui/badge";
 
+const statusStyles = {
+  pending: "bg-yellow-500",
+  inProcess: "bg-blue-500",
+  inShipping: "bg-purple-500",
+  delivered: "bg-green-500",
+  rejected: "bg-red-600",
+};
+
 const AdminOrderView = () => {
   const [openDetailsDialog, setOpenDetailDialog] = useState(false);
   const { orderList, orderDetails } = useSelector(
@@ -26,7 +34,7 @@ const AdminOrderView = () => {
   const dispatch = useDispatch();
 
   const handleGetOrderDetails = (orderId) => {
-    dispatch(getOrderDetailsByAdmin(orderId))
+    dispatch(getOrderDetailsByAdmin(orderId));
   };
 
   useEffect(() => {
@@ -34,10 +42,9 @@ const AdminOrderView = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if(orderDetails!==null) setOpenDetailDialog(true)
+    if (orderDetails !== null) setOpenDetailDialog(true);
   }, [orderDetails]);
 
-  
   return (
     <Card>
       <CardHeader>
@@ -63,13 +70,19 @@ const AdminOrderView = () => {
                     <TableCell>{order?.orderDate.split("T")[0]}</TableCell>
                     <TableCell>
                       <Badge
-                        className={`${
-                          order?.orderStatus === "pending"
-                            ? "bg-gray-500 hover:bg-gray-600"
-                            : "bg-green-500 hover:bg-green-600"
-                        } rounded-2xl px-3 py-1`}
+                        className={`py-1 px-3 ${
+                          statusStyles[order?.orderStatus] || "bg-black"
+                        }`}
                       >
-                        {order?.orderStatus}
+                        {order?.orderStatus
+                          ? {
+                              pending: "Pending",
+                              inProcess: "In Process",
+                              inShipping: "In Shipping",
+                              delivered: "Delivered",
+                              rejected: "Rejected",
+                            }[order?.orderStatus]
+                          : "Unknown"}
                       </Badge>
                     </TableCell>
                     <TableCell>${order?.totalAmount}</TableCell>
@@ -79,7 +92,7 @@ const AdminOrderView = () => {
                         onOpenChange={setOpenDetailDialog}
                       >
                         <Button
-                          onClick={() => handleGetOrderDetails(order._id)}
+                          onClick={() => handleGetOrderDetails(order?._id)}
                         >
                           View Details
                         </Button>

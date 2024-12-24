@@ -1,22 +1,51 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DialogContent } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
 import CommonForm from "../common/Form";
 import { useState } from "react";
+import {
+  getAllOrdersByAdmin,
+  getOrderDetailsByAdmin,
+  updateOrderStatus,
+} from "@/redux/admin/orderSlice";
+import { toast } from "sonner";
 
 const initialFormData = {
-    status: "",
+  status: "",
+};
+
+const statusStyles = {
+  pending: "bg-yellow-500",
+  inProcess: "bg-blue-500",
+  inShipping: "bg-purple-500",
+  delivered: "bg-green-500",
+  rejected: "bg-red-600",
+};
+const AdminOrderDetailDialog = ({ orderDetails }) => {
+  const [formData, setFormData] = useState(initialFormData);
+  const dispatch = useDispatch();
+
+  const handleUpdateStatus = (e) => {
+    e.preventDefault();
+
+    const { status } = formData;
+
+    dispatch(updateOrderStatus({ id: orderDetails?._id, orderStatus: status }))
+      .then((data) => {
+        if (data?.payload?.success) {
+          dispatch(getOrderDetailsByAdmin(orderDetails?._id));
+          dispatch(getAllOrdersByAdmin()); 
+          setFormData(initialFormData);
+          toast.success(data?.payload?.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-const AdminOrderDetailDialog = ({ orderDetails }) => {
-
-   const [formData,setFormData]=useState(initialFormData);
-
-   const handleUpdateStatus = () => {
-    
-   }
   return (
     <DialogContent className="sm:max-w-[600px]">
       <div className="grid gap-6">
@@ -46,14 +75,18 @@ const AdminOrderDetailDialog = ({ orderDetails }) => {
             <Label>
               <Badge
                 className={`py-1 px-3 ${
-                  orderDetails?.orderStatus === "confirmed"
-                    ? "bg-green-500"
-                    : orderDetails?.orderStatus === "rejected"
-                    ? "bg-red-600"
-                    : "bg-black"
+                  statusStyles[orderDetails?.orderStatus] || "bg-black"
                 }`}
               >
-                {orderDetails?.orderStatus}
+                {orderDetails?.orderStatus
+                  ? {
+                      pending: "Pending",
+                      inProcess: "In Process",
+                      inShipping: "In Shipping",
+                      delivered: "Delivered",
+                      rejected: "Rejected",
+                    }[orderDetails?.orderStatus]
+                  : "Unknown"}
               </Badge>
             </Label>
           </div>
@@ -63,8 +96,9 @@ const AdminOrderDetailDialog = ({ orderDetails }) => {
           <div className="grid gap-2">
             <p className="font-semibold">Order Details</p>
             <ul className="grid gap-3">
-              {orderDetails.cartItems && orderDetails.cartItems.length > 0 ? (
-                orderDetails.cartItems.map((cartItem) => (
+              {orderDetails?.cartItems &&
+              orderDetails?.cartItems?.length > 0 ? (
+                orderDetails?.cartItems.map((cartItem) => (
                   <li
                     key={cartItem._id}
                     className="flex items-center justify-between"
