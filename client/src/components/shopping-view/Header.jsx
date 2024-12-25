@@ -21,10 +21,14 @@ import UserCartWrapper from "./UserCartWrapper";
 import { fetchCartItems } from "@/redux/shop/cartSlice";
 
 function MenuItems() {
+
+  const navigate=useNavigate();
+
   return (
     <nav className="flex flex-col md:flex-row md:items-center gap-4">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
         <Label
+        onClick={() => navigate(menuItem.path)}
           key={menuItem.id}
           className="text-xs uppercase font-normal text-gray-600 hover:text-gray-700 cursor-pointer transition duration-200"
         >

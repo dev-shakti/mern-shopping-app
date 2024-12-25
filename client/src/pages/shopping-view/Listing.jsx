@@ -49,16 +49,6 @@ const ShopListing = () => {
   };
 
   const handleAddToCart = (getCurrentProductId) => {
-    //Check if product already exists in cart
-    const isProductInCart = cartItems?.items?.some(
-      (item) => item.productId?._id === getCurrentProductId
-    );
-
-    if (isProductInCart) {
-      toast.info("This product is already in your cart!");
-      return;
-    }
-
     // Dispatch addToCart action if product is not in cart
     dispatch(
       addToCart({
@@ -143,6 +133,7 @@ const ShopListing = () => {
             open={openDetailsDialog}
             setOpen={setOpenDetailsDialog}
             productDetails={productDetails}
+            handleAddToCart={handleAddToCart}
           />
         </div>
       </div>

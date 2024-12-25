@@ -14,7 +14,7 @@ import {
 } from "@/redux/shop/productReviewSlice";
 import { toast } from "sonner";
 
-const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
+const ProductDetailDialog = ({ open, setOpen, productDetails,handleAddToCart}) => {
   const [reviewMessage, setReviewMessage] = useState("");
   const [rating, setRating] = useState(0);
   const { user } = useSelector((state) => state.auth);
@@ -35,7 +35,6 @@ const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
       })
     )
       .then((data) => {
-        console.log(data);
         if (data?.payload?.success) {
           setRating(0);
           setReviewMessage("");
@@ -109,7 +108,7 @@ const ProductDetailDialog = ({ open, setOpen, productDetails }) => {
             </span>
           </div>
           <Separator />
-          <Button className="w-full mt-4 bg-orange-400 hover:bg-orange-500">
+          <Button onClick={() => handleAddToCart(productDetails?._id)} className="w-full mt-4 bg-orange-400 hover:bg-orange-500">
             Add To Cart
           </Button>
           <div className="max-h-[230px] overflow-auto mt-4">

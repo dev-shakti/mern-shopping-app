@@ -19,6 +19,7 @@ import { checkAuth } from "./redux/authSlice";
 import AdminProducts from "./pages/admin-view/Products";
 import PaypalReturnPage from "./pages/shopping-view/PaypalReturnPage";
 import PaypalSuccessPage from "./pages/shopping-view/PaypalSuccessPage";
+import SearchProducts from "./pages/shopping-view/Search";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -86,6 +87,7 @@ function App() {
           <Route path="account" element={<ShopingAccount />} />
           <Route path="paypal-return" element={<PaypalReturnPage />} />
           <Route path="payment-success" element={<PaypalSuccessPage />} />
+          <Route path="search" element={<SearchProducts />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

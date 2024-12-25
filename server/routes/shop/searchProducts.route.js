@@ -3,6 +3,6 @@ const { searchProducts } = require("../../controllers/shop/search.controller");
 
 const router = express.Router();
 
-router.post("/:keyword", searchProducts);
+router.get("/:keyword", searchProducts);
 
 module.exports = router;
