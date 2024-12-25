@@ -3,7 +3,7 @@ import UserCartContent from "./UserCartContent";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 
-const UserCartWrapper = ({ cartItems }) => {
+const UserCartWrapper = ({ cartItems,setOpenCartSheet }) => {
   const navigate = useNavigate();
 
   const totalAmount = cartItems
@@ -40,7 +40,10 @@ const UserCartWrapper = ({ cartItems }) => {
         </div>
       </div>
       <Button
-        onClick={() => navigate("/shop/checkout")}
+        onClick={() => {
+          navigate("/shop/checkout")
+          setOpenCartSheet(false)
+        }}
         className="w-full bg-orange-300 hover:bg-orange-400 mt-6"
       >
         Proceed To Checkout
