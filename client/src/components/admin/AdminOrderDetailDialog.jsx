@@ -22,8 +22,9 @@ const statusStyles = {
   inShipping: "bg-purple-500",
   delivered: "bg-green-500",
   rejected: "bg-red-600",
+  confirmed:"bg-black"
 };
-const AdminOrderDetailDialog = ({ orderDetails }) => {
+const AdminOrderDetailDialog = ({ orderDetails}) => {
   const [formData, setFormData] = useState(initialFormData);
   const dispatch = useDispatch();
 
@@ -45,7 +46,7 @@ const AdminOrderDetailDialog = ({ orderDetails }) => {
         console.log(err);
       });
   };
-
+  
   return (
     <DialogContent className="sm:max-w-[600px]">
       <div className="grid gap-6">
@@ -85,6 +86,7 @@ const AdminOrderDetailDialog = ({ orderDetails }) => {
                       inShipping: "In Shipping",
                       delivered: "Delivered",
                       rejected: "Rejected",
+                      confirmed:"Confirmed"
                     }[orderDetails?.orderStatus]
                   : "Unknown"}
               </Badge>
@@ -157,12 +159,14 @@ const AdminOrderDetailDialog = ({ orderDetails }) => {
                 label: "Order Status",
                 name: "status",
                 componentType: "select",
+                defaultValue: "confirmed", 
                 options: [
                   { id: "pending", label: "Pending" },
                   { id: "inProcess", label: "In Process" },
                   { id: "inShipping", label: "In Shipping" },
                   { id: "delivered", label: "Delivered" },
                   { id: "rejected", label: "Rejected" },
+                  { id: "confirmed", label: "Confirmed", disabled: true },
                 ],
               },
             ]}

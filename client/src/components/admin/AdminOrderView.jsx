@@ -15,6 +15,7 @@ import AdminOrderDetailDialog from "./AdminOrderDetailDialog";
 import {
   getAllOrdersByAdmin,
   getOrderDetailsByAdmin,
+  resetOrderDetails,
 } from "@/redux/admin/orderSlice";
 import { Badge } from "../ui/badge";
 
@@ -24,6 +25,7 @@ const statusStyles = {
   inShipping: "bg-purple-500",
   delivered: "bg-green-500",
   rejected: "bg-red-600",
+  confirmed: "bg-black",
 };
 
 const AdminOrderView = () => {
@@ -44,6 +46,8 @@ const AdminOrderView = () => {
   useEffect(() => {
     if (orderDetails !== null) setOpenDetailDialog(true);
   }, [orderDetails]);
+
+  console.log(openDetailsDialog)
 
   return (
     <Card>
@@ -81,6 +85,7 @@ const AdminOrderView = () => {
                               inShipping: "In Shipping",
                               delivered: "Delivered",
                               rejected: "Rejected",
+                              confirmed: "Confirmed",
                             }[order?.orderStatus]
                           : "Unknown"}
                       </Badge>
@@ -89,14 +94,19 @@ const AdminOrderView = () => {
                     <TableCell className="text-right">
                       <Dialog
                         open={openDetailsDialog}
-                        onOpenChange={setOpenDetailDialog}
+                        onOpenChange={() => {
+                          setOpenDetailDialog(false);
+                          dispatch(resetOrderDetails());
+                        }}
                       >
                         <Button
                           onClick={() => handleGetOrderDetails(order?._id)}
                         >
                           View Details
                         </Button>
-                        <AdminOrderDetailDialog orderDetails={orderDetails} />
+                        <AdminOrderDetailDialog
+                          orderDetails={orderDetails}
+                        />
                       </Dialog>
                     </TableCell>
                   </TableRow>

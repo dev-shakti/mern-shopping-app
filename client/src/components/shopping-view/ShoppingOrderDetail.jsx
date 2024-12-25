@@ -4,6 +4,16 @@ import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Badge } from "../ui/badge";
+
+const statusStyles = {
+  pending: "bg-yellow-500",
+  inProcess: "bg-blue-500",
+  inShipping: "bg-purple-500",
+  delivered: "bg-green-500",
+  rejected: "bg-red-600",
+  confirmed: "bg-black",
+};
 
 const ShoppingOrderDetail = ({ orderId }) => {
   const { orderDetails } = useSelector((state) => state.shoppingOrderSlice);
@@ -45,18 +55,22 @@ const ShoppingOrderDetail = ({ orderId }) => {
           <div className="flex mt-2 items-center justify-between">
             <p className="font-semibold text-sm">Order Status</p>
             <Label>
-              {/* <Badge
+              <Badge
                 className={`py-1 px-3 ${
-                  orderDetails?.orderStatus === "confirmed"
-                    ? "bg-green-500"
-                    : orderDetails?.orderStatus === "rejected"
-                    ? "bg-red-600"
-                    : "bg-black"
+                  statusStyles[orderDetails?.orderStatus] || "bg-black"
                 }`}
               >
-                Pending
-              </Badge> */}
-              {orderDetails?.orderStatus}
+                {orderDetails?.orderStatus
+                  ? {
+                      pending: "Pending",
+                      inProcess: "In Process",
+                      inShipping: "In Shipping",
+                      delivered: "Delivered",
+                      rejected: "Rejected",
+                      confirmed: "Confirmed",
+                    }[orderDetails?.orderStatus]
+                  : "Unknown"}
+              </Badge>
             </Label>
           </div>
         </div>
@@ -73,7 +87,8 @@ const ShoppingOrderDetail = ({ orderId }) => {
                   <strong>Quantity: </strong>Quantity
                 </p>
                 <p className=" text-sm">
-                  <strong>Price:</strong>{orderDetails?.totalAmount}
+                  <strong>Price:</strong>
+                  {orderDetails?.totalAmount}
                 </p>
               </li>
             </ul>
@@ -85,7 +100,7 @@ const ShoppingOrderDetail = ({ orderId }) => {
             <div className="grid gap-0.5">
               <p className=" text-sm">
                 <strong>User Email: </strong>
-                {user?.email}
+                {user?.userName[0].toUpperCase()}
               </p>
               <p className=" text-sm">
                 <strong>Address: </strong>

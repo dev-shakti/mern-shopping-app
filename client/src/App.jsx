@@ -30,11 +30,21 @@ function App() {
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
-  
+
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       {/* common components */}
       <Routes>
+        <Route
+          path="/"
+          element={
+            <CheckAuth
+              isAuthenticated={isAuthenticated}
+              user={user}
+              isLoading={isLoading}
+            ></CheckAuth>
+          }
+        />
         <Route
           path="/auth"
           element={

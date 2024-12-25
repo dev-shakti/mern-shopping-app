@@ -20,9 +20,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCartItems } from "@/redux/shop/cartSlice";
-import { getFilterProducts } from "@/redux/shop/productSlice";
+import { addToCart, fetchCartItems } from "@/redux/shop/cartSlice";
+import {
+  fetchProductDetails,
+  getFilterProducts,
+} from "@/redux/shop/productSlice";
 import ShoppingProductCard from "@/components/shopping-view/ShoppingProductCard";
+import { toast } from "sonner";
+import ProductDetailDialog from "@/components/shopping-view/ProductDetailDialog";
 
 const categoriesWithIcon = [
   { id: "men", label: "Men", icon: ShirtIcon },
@@ -44,8 +49,12 @@ const brandsWithIcon = [
 const imageList = [bannerOne, bannerTwo, BannerThree];
 
 const ShoppingHome = () => {
+  const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { productList } = useSelector((state) => state.shoppingProducts);
+  const { productList, productDetails } = useSelector(
+    (state) => state.shoppingProducts
+  );
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -59,6 +68,34 @@ const ShoppingHome = () => {
 
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (productDetails !== null) setOpenDetailsDialog(true);
+  }, [productDetails]);
+
+  const handleAddToCart = (getCurrentProductId) => {
+    // Dispatch addToCart action if product is not in cart
+    dispatch(
+      addToCart({
+        userId: user?.id,
+        productId: getCurrentProductId,
+        quantity: 1,
+      })
+    )
+      .then((data) => {
+        if (data?.payload?.success) {
+          dispatch(fetchCartItems(user?.id));
+          toast.success(data.payload.message);
+        }
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  };
+
+  const handleGetProductDetails = (getCurrentProductId) => {
+    dispatch(fetchProductDetails(getCurrentProductId));
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -128,13 +165,24 @@ const ShoppingHome = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {productList && productList.length > 0 ? (
               productList.map((product) => (
-                <ShoppingProductCard key={product._id} product={product} />
+                <ShoppingProductCard
+                  key={product._id}
+                  product={product}
+                  handleAddToCart={handleAddToCart}
+                  handleGetProductDetails={handleGetProductDetails}
+                />
               ))
             ) : (
               <span className="text-xl text-red-500 font-semibold text-center ">
                 No Products Found
               </span>
             )}
+            <ProductDetailDialog
+              open={openDetailsDialog}
+              setOpen={setOpenDetailsDialog}
+              productDetails={productDetails}
+              handleAddToCart={handleAddToCart}
+            />
           </div>
         </div>
       </section>

@@ -21,7 +21,7 @@ const CommonForm = ({
   }) => {
     function renderInputsByComponentType(getControlItem) {
         let element = null;
-        const value = formData[getControlItem.name] || "";
+        const value = formData[getControlItem.name] || getControlItem.defaultValue || "";
     
         switch (getControlItem.componentType) {
           case "input":
@@ -59,7 +59,7 @@ const CommonForm = ({
                 <SelectContent>
                   {getControlItem.options && getControlItem.options.length > 0
                     ? getControlItem.options.map((optionItem) => (
-                        <SelectItem key={optionItem.id} value={optionItem.id}>
+                        <SelectItem key={optionItem.id} value={optionItem.id} disabled={optionItem.disabled || false}>
                           {optionItem.label}
                         </SelectItem>
                       ))

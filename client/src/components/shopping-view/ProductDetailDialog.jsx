@@ -13,6 +13,8 @@ import {
   getProductReviews,
 } from "@/redux/shop/productReviewSlice";
 import { toast } from "sonner";
+import { resetProductDetails } from "@/redux/shop/productSlice";
+
 
 const ProductDetailDialog = ({ open, setOpen, productDetails,handleAddToCart}) => {
   const [reviewMessage, setReviewMessage] = useState("");
@@ -53,6 +55,7 @@ const ProductDetailDialog = ({ open, setOpen, productDetails,handleAddToCart}) =
 
   const handleDialogClose = () => {
     setRating(0);
+    dispatch(resetProductDetails())
     setReviewMessage("");
     setOpen(false);
   };
