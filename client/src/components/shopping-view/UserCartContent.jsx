@@ -43,7 +43,6 @@ const UserCartContent = ({ cartItem }) => {
       deleteCartItem({ userId: user.id, productId: cartItem.productId._id })
     )
       .then((data) => {
-        console.log(data);
         if (data?.payload?.success) {
           toast.success(data.payload.message);
         }

@@ -22,10 +22,6 @@ const ShoppingOrderDetail = ({ orderId }) => {
 
   useEffect(() => {
     dispatch(getOrderDetails(orderId))
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => console.log(err));
   }, [dispatch, orderId]);
 
   return (

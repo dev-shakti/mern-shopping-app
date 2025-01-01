@@ -24,6 +24,7 @@ import { toast } from "sonner";
 
 const ShopListing = () => {
   const [sort, setSort] = useState(null);
+  const [filters, setFilters] = useState({});
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const { productList, productDetails } = useSelector(
@@ -42,6 +43,28 @@ const ShopListing = () => {
 
   const handleSort = (value) => {
     setSort(value);
+  };
+
+  const handleFilters = (getSectionId, getCurrentOption) => {
+    let cpyFilters = { ...filters };
+    const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
+ 
+    if (indexOfCurrentSection === -1) {
+      cpyFilters = {
+        ...cpyFilters,
+        [getSectionId]: [getCurrentOption],
+      };
+    } else {
+      const indexOfCurrentOption =
+        cpyFilters[getSectionId].indexOf(getCurrentOption);
+   
+      if (indexOfCurrentOption === -1)
+        cpyFilters[getSectionId].push(getCurrentOption);
+      else cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
+    }
+    setFilters(cpyFilters);
+    sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
+  
   };
 
   const handleGetProductDetails = (getCurrentProductId) => {
@@ -68,11 +91,13 @@ const ShopListing = () => {
       });
   };
 
+ 
+
   return (
     <div className="w-full px-4 py-12 ">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row gap-6 ">
         {/* product filters */}
-        <ProductFilter />
+        <ProductFilter filters={filters} handleFilters={handleFilters} />
         <div className="flex-1">
           <div className="bg-background w-full rounded-lg shadow-sm">
             <div className="p-4 border-b flex items-center justify-between">

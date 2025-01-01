@@ -30,7 +30,7 @@ function App() {
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
-
+ 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       {/* common components */}
