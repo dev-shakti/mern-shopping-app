@@ -7,7 +7,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
-import { sortOptions } from "@/config";
+import { filterOptions, sortOptions } from "@/config";
 import { addToCart, fetchCartItems } from "@/redux/shop/cartSlice";
 import {
   fetchProductDetails,
@@ -20,11 +20,27 @@ import {
 import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+
+function createSearchParamsHelper(filterParams) {
+  const queryParams = [];
+
+  for (const [key, value] of Object.entries(filterParams)) {
+    if (Array.isArray(value) && value.length > 0) {
+      const paramValue = value.join(",");
+
+      queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
+    }
+  }
+
+  return queryParams.join("&");
+}
 
 const ShopListing = () => {
   const [sort, setSort] = useState(null);
   const [filters, setFilters] = useState({});
+  const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const { productList, productDetails } = useSelector(
@@ -33,13 +49,29 @@ const ShopListing = () => {
   const { cartItems } = useSelector((state) => state.shoppingCart);
   const dispatch = useDispatch();
 
+  const categorySearchParam = searchParams.get("category");
+
   useEffect(() => {
-    dispatch(getFilterProducts());
-  }, [dispatch]);
+    if (filters !== null && sort !== null) {
+      dispatch(getFilterProducts({filterParams:filters,sortParams:sort}));
+    }
+  }, [dispatch, filters, sort]);
 
   useEffect(() => {
     if (productDetails !== null) setOpenDetailsDialog(true);
   }, [productDetails]);
+
+  useEffect(() => {
+    setSort("price-lowtohigh");
+    setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
+  }, [categorySearchParam]);
+
+  useEffect(() => {
+    if (filters && Object.keys(filters).length > 0) {
+      const createQueryString = createSearchParamsHelper(filters);
+      setSearchParams(new URLSearchParams(createQueryString));
+    }
+  }, [filters, setSearchParams]);
 
   const handleSort = (value) => {
     setSort(value);
@@ -48,7 +80,7 @@ const ShopListing = () => {
   const handleFilters = (getSectionId, getCurrentOption) => {
     let cpyFilters = { ...filters };
     const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
- 
+
     if (indexOfCurrentSection === -1) {
       cpyFilters = {
         ...cpyFilters,
@@ -57,14 +89,13 @@ const ShopListing = () => {
     } else {
       const indexOfCurrentOption =
         cpyFilters[getSectionId].indexOf(getCurrentOption);
-   
+
       if (indexOfCurrentOption === -1)
         cpyFilters[getSectionId].push(getCurrentOption);
       else cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
     }
     setFilters(cpyFilters);
     sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
-  
   };
 
   const handleGetProductDetails = (getCurrentProductId) => {
@@ -90,9 +121,8 @@ const ShopListing = () => {
         console.error(error.message);
       });
   };
-
- 
-
+  
+  
   return (
     <div className="w-full px-4 py-12 ">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row gap-6 ">

@@ -2,7 +2,50 @@ const Product = require("../../models/product.model");
 
 const getFilterProducts = async (req, res) => {
     try {
-      const products = await Product.find({});
+      const { category = "", brand = "", sortBy = "price-lowtohigh" } = {
+        category: req.query.Category || "",
+        brand: req.query.Brand || "",
+        sortBy: req.query.sortBy || "price-lowtohigh",
+      };
+
+      let filters = {};
+
+      if (category.length) {
+        filters.category = { $in: category.split(",") };
+      }
+  
+      if (brand.length) {
+        filters.brand = { $in: brand.split(",") };
+      }
+      
+      let sort = {};
+
+      switch (sortBy) {
+        case "price-lowtohigh":
+          sort.price = 1;
+  
+          break;
+        case "price-hightolow":
+          sort.price = -1;
+  
+          break;
+        case "title-atoz":
+          sort.title = 1;
+  
+          break;
+  
+        case "title-ztoa":
+          sort.title = -1;
+  
+          break;
+  
+        default:
+          sort.price = 1;
+          break;
+      }
+
+      const products = await Product.find(filters).sort(sort);
+      
       return res.status(200).json({
         success: true,
         data:products,

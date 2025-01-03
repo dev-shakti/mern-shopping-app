@@ -4,7 +4,7 @@ import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
 import { Separator } from "../ui/separator";
 
-const ProductFilter = ({filters,handleFilters}) => {
+const ProductFilter = ({ filters, handleFilters }) => {
   return (
     <div className="w-64  rounded-lg shadow-sm">
       <div className="p-4 border-b">
@@ -18,12 +18,20 @@ const ProductFilter = ({filters,handleFilters}) => {
               <div className="flex flex-col space-y-2 mt-2">
                 {filterOptions[keyItem].map((option) => (
                   <Label key={option.id} className="flex items-center gap-2">
-                    <Checkbox onCheckedChange={() => handleFilters(keyItem,option.id)}/>
+                    <Checkbox
+                      checked={
+                        filters &&
+                        Object.keys(filters).length > 0 &&
+                        filters[keyItem] &&
+                        filters[keyItem].indexOf(option.id) > -1
+                      }
+                      onCheckedChange={() => handleFilters(keyItem, option.id)}
+                    />
                     {option.label}
                   </Label>
                 ))}
               </div>
-              <Separator className="mt-2"/>
+              <Separator className="mt-2" />
             </div>
           </Fragment>
         ))}
