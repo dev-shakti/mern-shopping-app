@@ -102,7 +102,20 @@ const ShopListing = () => {
     dispatch(fetchProductDetails(getCurrentProductId));
   };
 
-  const handleAddToCart = (getCurrentProductId) => {
+  const handleAddToCart = (getCurrentProductId,getTotalStock) => {
+    let getCartItems = cartItems.items || [];
+
+    if(getCartItems.length>0){
+      const indexOfCurrentItem=getCartItems.findIndex((item) => item.productId===getCurrentProductId)
+      console.log(indexOfCurrentItem)
+      if(indexOfCurrentItem>-1){
+        const getQuantity=getCartItems[indexOfCurrentItem].quantity
+        if(getQuantity+1>getTotalStock){
+          toast.success(`Only ${getQuantity} quantity can be added for this item`)
+        }
+      }
+    }
+
     // Dispatch addToCart action if product is not in cart
     dispatch(
       addToCart({

@@ -1,3 +1,4 @@
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 
@@ -6,15 +7,30 @@ const ShoppingProductCard = ({
   handleGetProductDetails,
   handleAddToCart,
 }) => {
-
   return (
     <Card className="w-full max-w-sm mx-auto shadow-lg hover:shadow-xl cursor-pointer rounded-lg">
       <div onClick={() => handleGetProductDetails(product?._id)}>
-        <img
-          src={product?.image}
-          alt={product?.title}
-          className="h-[250px] object-cover w-full rounded-t-lg"
-        />
+        <div className="relative">
+          <img
+            src={product?.image}
+            alt={product?.title}
+            className="h-[250px] object-cover w-full rounded-t-lg"
+          />
+          {product?.totalStock === 0 ? (
+            <Badge className="absolute top-2 left-2 bg-gray-500 hover:bg-gray-600">
+              Out Of Stock
+            </Badge>
+          ) : product?.totalStock < 10 ? (
+            <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
+              {`Only ${product?.totalStock} items left`}
+            </Badge>
+          ) : product?.salePrice > 0 ? (
+            <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
+              Sale
+            </Badge>
+          ) : null}
+        </div>
+
         <CardContent className="p-4">
           <h2 className="text-xl font-bold mb-2">{product?.title}</h2>
           <div className="flex justify-between items-center mb-2">
@@ -50,12 +66,20 @@ const ShoppingProductCard = ({
         </CardContent>
       </div>
       <CardFooter className="flex justify-end items-center gap-4">
-        <Button
-          onClick={() => handleAddToCart(product._id)}
-          className="bg-orange-400 hover:bg-orange-500 w-full"
-        >
-          Add To Cart
-        </Button>
+        {product?.totalStock === 0 ? (
+          <Button
+            className="opacity-60 cursor-not-allowed w-full"
+          >
+            Out of Stock
+          </Button>
+        ) : (
+          <Button
+            onClick={() => handleAddToCart(product._id,product?.totalStock)}
+            className="bg-orange-400 hover:bg-orange-500 w-full"
+          >
+            Add To Cart
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

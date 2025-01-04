@@ -15,17 +15,21 @@ import {
 import { toast } from "sonner";
 import { resetProductDetails } from "@/redux/shop/productSlice";
 
-
-const ProductDetailDialog = ({ open, setOpen, productDetails,handleAddToCart}) => {
+const ProductDetailDialog = ({
+  open,
+  setOpen,
+  productDetails,
+  handleAddToCart,
+}) => {
   const [reviewMessage, setReviewMessage] = useState("");
   const [rating, setRating] = useState(0);
   const { user } = useSelector((state) => state.auth);
   const { reviews } = useSelector((state) => state.productReview);
   const dispatch = useDispatch();
 
-  const price=Number(productDetails?.price)
-  const salePrice=Number(productDetails?.salePrice)
- 
+  const price = Number(productDetails?.price);
+  const salePrice = Number(productDetails?.salePrice);
+
   const addReview = () => {
     dispatch(
       addProductReview({
@@ -55,7 +59,7 @@ const ProductDetailDialog = ({ open, setOpen, productDetails,handleAddToCart}) =
 
   const handleDialogClose = () => {
     setRating(0);
-    dispatch(resetProductDetails())
+    dispatch(resetProductDetails());
     setReviewMessage("");
     setOpen(false);
   };
@@ -67,11 +71,10 @@ const ProductDetailDialog = ({ open, setOpen, productDetails,handleAddToCart}) =
   }, [dispatch, productDetails]);
 
   const averageReview =
-  reviews && reviews.length > 0
-    ? reviews.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) /
-      reviews.length
-    : 0;
-
+    reviews && reviews.length > 0
+      ? reviews.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) /
+        reviews.length
+      : 0;
 
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
@@ -105,15 +108,24 @@ const ProductDetailDialog = ({ open, setOpen, productDetails,handleAddToCart}) =
             ) : null}
           </div>
           <div className="flex items-center gap-1 mt-4 mb-2">
-            <StarRating rating={averageReview}/>
+            <StarRating rating={averageReview} />
             <span className="text-muted-foreground">
               ({averageReview.toFixed(2)})
             </span>
           </div>
           <Separator />
-          <Button onClick={() => handleAddToCart(productDetails?._id)} className="w-full mt-4 bg-orange-400 hover:bg-orange-500">
-            Add To Cart
-          </Button>
+          {productDetails?.totalStock === 0 ? (
+            <Button className="opacity-60 cursor-not-allowed w-full">
+              Out of Stock
+            </Button>
+          ) : (
+            <Button
+              onClick={() => handleAddToCart(productDetails?._id)}
+              className="bg-orange-400 hover:bg-orange-500 w-full"
+            >
+              Add To Cart
+            </Button>
+          )}
           <div className="max-h-[230px] overflow-auto mt-4">
             {reviews && reviews.length > 0 ? (
               reviews.map((review) => (
@@ -122,7 +134,7 @@ const ProductDetailDialog = ({ open, setOpen, productDetails,handleAddToCart}) =
                   <div className="flex gap-4">
                     <Avatar className="w-10 h-10 border">
                       <AvatarFallback>
-                      {review?.userName[0].toUpperCase()}
+                        {review?.userName[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col gap-2">

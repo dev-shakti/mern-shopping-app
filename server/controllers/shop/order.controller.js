@@ -2,7 +2,8 @@ const Order=require("../../models/orders.model")
 const Cart = require("../../models/cart.model");
 const product = require("../../models/product.model");
 const paypal=require("../../helper/paypal");
-const mongoose=require("mongoose")
+const mongoose=require("mongoose");
+const Product = require("../../models/product.model");
 
 
 const createOrder = async (req, res) => {
@@ -120,10 +121,24 @@ const capturePayment = async (req, res) => {
           });
     }
 
-    order.paymentStatus="paid"
-    order.orderStatus="confirmed"
-    order.paymentId=paymentId
-    order.payerId=payerId
+    order.paymentStatus="paid";
+    order.orderStatus="confirmed";
+    order.paymentId=paymentId;
+    order.payerId=payerId;
+
+    for(let item of order.cartItems){
+      const product=await Product.findById(item.productId);
+      if(!product){
+        return res.status(400).json({
+          success: false,
+          message: `Not enough stock for this product ${product.title}`,
+        });
+      }
+
+      product.totalStock-=item.quantity
+
+      await product.save()
+    }
 
    
     const cartId = order.cartId;
