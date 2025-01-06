@@ -6,10 +6,11 @@ import { toast } from "sonner";
 
 const UserCartContent = ({ cartItem }) => {
   const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.shoppingCart);
+  const { productList } = useSelector((state) => state.shoppingProducts);
   const dispatch = useDispatch();
 
-  
-  const salePrice=Number(cartItem?.productId?.salePrice)
+  const salePrice = Number(cartItem?.productId?.salePrice);
   const quantity = Number(cartItem?.quantity);
   const price = Number(cartItem?.productId?.price);
 
@@ -20,6 +21,33 @@ const UserCartContent = ({ cartItem }) => {
         : Number(cartItem.quantity) - 1;
 
     if (updatedQuantity < 1) return;
+
+    let getCartItems = cartItems.items || [];
+
+    if (getCartItems.length) {
+      const indexOfCurrentItem = getCartItems.findIndex(
+        (item) => item.productId._id === cartItem.productId._id
+      );
+
+      const indexOfCurrentProduct = productList.findIndex(
+        (product) =>
+          product._id === (cartItem.productId && cartItem.productId._id)
+      );
+
+      if (typeOfAction === "plus") {
+        const totalStock = productList[indexOfCurrentProduct].totalStock;
+
+        if (indexOfCurrentItem > -1) {
+          const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+          if (getQuantity + 1 > totalStock) {
+            toast.success(
+              `Only ${getQuantity} quantity can be added for this item`
+            );
+            return;
+          }
+        }
+      }
+    }
 
     dispatch(
       updateCartItem({
@@ -88,9 +116,9 @@ const UserCartContent = ({ cartItem }) => {
       </div>
       {/* right */}
       <div className="flex flex-col gap-2">
-         <p className="font-semibold">
-            {salePrice>0 ? salePrice*quantity : price*quantity}
-         </p>
+        <p className="font-semibold">
+          {salePrice > 0 ? salePrice * quantity : price * quantity}
+        </p>
         <Button
           className=""
           variant="outline"

@@ -120,7 +120,9 @@ const ProductDetailDialog = ({
             </Button>
           ) : (
             <Button
-              onClick={() => handleAddToCart(productDetails?._id)}
+              onClick={() =>
+                handleAddToCart(productDetails?._id, productDetails?.totalStock)
+              }
               className="bg-orange-400 hover:bg-orange-500 w-full"
             >
               Add To Cart

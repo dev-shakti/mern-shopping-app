@@ -53,7 +53,7 @@ const ShopListing = () => {
 
   useEffect(() => {
     if (filters !== null && sort !== null) {
-      dispatch(getFilterProducts({filterParams:filters,sortParams:sort}));
+      dispatch(getFilterProducts({ filterParams: filters, sortParams: sort }));
     }
   }, [dispatch, filters, sort]);
 
@@ -102,16 +102,20 @@ const ShopListing = () => {
     dispatch(fetchProductDetails(getCurrentProductId));
   };
 
-  const handleAddToCart = (getCurrentProductId,getTotalStock) => {
+  const handleAddToCart = (getCurrentProductId, getTotalStock) => {
     let getCartItems = cartItems.items || [];
-
-    if(getCartItems.length>0){
-      const indexOfCurrentItem=getCartItems.findIndex((item) => item.productId===getCurrentProductId)
-      console.log(indexOfCurrentItem)
-      if(indexOfCurrentItem>-1){
-        const getQuantity=getCartItems[indexOfCurrentItem].quantity
-        if(getQuantity+1>getTotalStock){
-          toast.success(`Only ${getQuantity} quantity can be added for this item`)
+    if (getCartItems.length) {
+      const indexOfCurrentItem = getCartItems.findIndex(
+        (item) => item.productId._id === getCurrentProductId
+      );
+      
+      if (indexOfCurrentItem > -1) {
+        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+        if (getQuantity + 1 > getTotalStock) {
+          toast.success(
+            `Only ${getQuantity} quantity can be added for this item`
+          );
+          return;
         }
       }
     }
@@ -134,8 +138,7 @@ const ShopListing = () => {
         console.error(error.message);
       });
   };
-  
-  
+
   return (
     <div className="w-full px-4 py-12 ">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row gap-6 ">
