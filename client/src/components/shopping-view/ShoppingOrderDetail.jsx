@@ -21,8 +21,9 @@ const ShoppingOrderDetail = ({ orderId }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getOrderDetails(orderId))
+    dispatch(getOrderDetails(orderId));
   }, [dispatch, orderId]);
+  console.log(orderDetails);
 
   return (
     <DialogContent className="sm:max-w-[600px]">
@@ -74,29 +75,30 @@ const ShoppingOrderDetail = ({ orderId }) => {
         <div className="grid gap-4">
           <div className="grid gap-2">
             <p className="font-semibold">Order Details</p>
+
             <ul className="grid gap-3">
-              <li className="flex items-center justify-between">
-                <p className="text-sm">
-                  <strong>Title: </strong>
-                </p>
-                <p className=" text-sm">
-                  <strong>Quantity: </strong>Quantity
-                </p>
-                <p className=" text-sm">
-                  <strong>Price:</strong>
-                  {orderDetails?.totalAmount}
-                </p>
-              </li>
+              {orderDetails?.cartItems && orderDetails?.cartItems.length > 0
+                ? orderDetails?.cartItems.map((item) => (
+                    <li
+                      className="flex items-center justify-between"
+                      key={item._id}
+                    >
+                      <p><strong>Title: </strong>{item.title}</p>
+                      <p><strong>Quantity: </strong> {item.quantity}</p>
+                      <p><strong>Price: </strong> ${item.price}</p>
+                    </li>
+                  ))
+                : null}
             </ul>
           </div>
         </div>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <p className="font-medium">Shipping Info</p>
+            <p className="font-bold">Shipping Info</p>
             <div className="grid gap-0.5">
               <p className=" text-sm">
-                <strong>User Email: </strong>
-                {user?.userName[0].toUpperCase()}
+                <strong>UserName: </strong>
+                {user?.userName}
               </p>
               <p className=" text-sm">
                 <strong>Address: </strong>
