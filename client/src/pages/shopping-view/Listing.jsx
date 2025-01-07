@@ -138,7 +138,7 @@ const ShopListing = () => {
         console.error(error.message);
       });
   };
-
+ 
   return (
     <div className="w-full px-4 py-12 ">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row gap-6 ">

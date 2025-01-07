@@ -1,6 +1,6 @@
 import { shoppingViewHeaderMenuItems } from "@/config";
 import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Label } from "../ui/label";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
@@ -23,12 +23,34 @@ import { fetchCartItems } from "@/redux/shop/cartSlice";
 function MenuItems() {
 
   const navigate=useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  function handleNavigate(getCurrentMenuItem){
+    sessionStorage.removeItem("filters");
+    const currentFilter =
+      getCurrentMenuItem.id !== "home" &&
+      getCurrentMenuItem.id !== "products" &&
+      getCurrentMenuItem.id !== "search"
+        ? {
+            category: [getCurrentMenuItem.id],
+          }
+        : null;
+
+    sessionStorage.setItem("filters", JSON.stringify(currentFilter));
+
+    location.pathname.includes("listing") && currentFilter !== null
+      ? setSearchParams(
+          new URLSearchParams(`?category=${getCurrentMenuItem.id}`)
+        )
+      : navigate(getCurrentMenuItem.path);
+  }
 
   return (
     <nav className="flex flex-col md:flex-row md:items-center gap-4">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
         <Label
-        onClick={() => navigate(menuItem.path)}
+        onClick={() => handleNavigate(menuItem)}
           key={menuItem.id}
           className="text-xs uppercase font-normal text-gray-600 hover:text-gray-700 cursor-pointer transition duration-200"
         >
@@ -69,7 +91,8 @@ function HeaderRightContent() {
       dispatch(fetchCartItems(user.id));
     }
   }, [dispatch, user.id]);
-
+  
+  
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
       <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
@@ -98,12 +121,12 @@ function HeaderRightContent() {
         <DropdownMenuTrigger asChild>
           <Avatar className="cursor-pointer bg-black">
             <AvatarFallback className="bg-black text-white font-extrabold">
-              CN
+            {user?.userName[0].toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48">
-          <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
+          <DropdownMenuLabel>{user?.userName}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => nagivate("/shop/account")}>
             <UserCog className="mr-2 h-4 w-4" />

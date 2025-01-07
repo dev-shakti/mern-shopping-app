@@ -81,7 +81,7 @@ const loginUser = async (req, res) => {
 
     // Prepare user data to send in response
     const userData = {
-      _id: user._id,
+      id: user._id,
       email: user.email,
       role: user.role,
       userName: user?.userName,

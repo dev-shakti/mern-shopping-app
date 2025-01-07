@@ -54,6 +54,7 @@ const ShoppingHome = () => {
   const { productList, productDetails } = useSelector(
     (state) => state.shoppingProducts
   );
+  const { cartItems } = useSelector((state) => state.shoppingCart);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
@@ -73,7 +74,23 @@ const ShoppingHome = () => {
     if (productDetails !== null) setOpenDetailsDialog(true);
   }, [productDetails]);
 
-  const handleAddToCart = (getCurrentProductId) => {
+  const handleAddToCart = (getCurrentProductId,getTotalStock) => {  
+    let getCartItems = cartItems.items || [];
+    if (getCartItems.length) {
+      const indexOfCurrentItem = getCartItems.findIndex(
+        (item) => item.productId._id === getCurrentProductId
+      );
+      
+      if (indexOfCurrentItem > -1) {
+        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+        if (getQuantity + 1 > getTotalStock) {
+          toast.success(
+            `Only ${getQuantity} quantity can be added for this item`
+          );
+          return;
+        }
+      }
+    } 
     // Dispatch addToCart action if product is not in cart
     dispatch(
       addToCart({
