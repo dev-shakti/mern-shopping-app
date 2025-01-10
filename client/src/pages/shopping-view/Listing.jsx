@@ -50,7 +50,7 @@ const ShopListing = () => {
   const dispatch = useDispatch();
 
   const categorySearchParam = searchParams.get("category");
-
+  
   useEffect(() => {
     if (filters !== null && sort !== null) {
       dispatch(getFilterProducts({ filterParams: filters, sortParams: sort }));

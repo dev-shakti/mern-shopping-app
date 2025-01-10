@@ -15,15 +15,9 @@ const statusStyles = {
   confirmed: "bg-black",
 };
 
-const ShoppingOrderDetail = ({ orderId }) => {
-  const { orderDetails } = useSelector((state) => state.shoppingOrderSlice);
-  const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getOrderDetails(orderId));
-  }, [dispatch, orderId]);
-  console.log(orderDetails);
+const ShoppingOrderDetail = ({ orderDetails }) => {
+ 
+  const {user}=useSelector((state) => state.auth)
 
   return (
     <DialogContent className="sm:max-w-[600px]">

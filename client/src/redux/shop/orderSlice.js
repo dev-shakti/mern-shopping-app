@@ -12,7 +12,6 @@ const initialState = {
 export const createNewOrder = createAsyncThunk(
   "/order/createNewOrder",
   async (orderData) => {
-    console.log(orderData)
     const response = await axios.post(
       "http://localhost:4415/api/shop/order/create",
       orderData
@@ -49,7 +48,7 @@ export const getOrderDetails = createAsyncThunk(
   "/order/getOrderDetails",
   async (id) => {
     const response = await axios.get(
-      `http://localhost:4415/api/shop/order/update/${id}`
+      `http://localhost:4415/api/shop/order/details/${id}`
     );
 
     return response.data;
@@ -59,7 +58,11 @@ export const getOrderDetails = createAsyncThunk(
 const shoppingOrderSlice = createSlice({
   name: "shoppingOrderSlice",
   initialState,
-  reducers: {},
+  reducers: {
+    resetOrderDetails:(state) => {
+      state.orderDetails=null
+    }
+  },
   extraReducers: (builders) => {
     builders
       .addCase(createNewOrder.pending, (state) => {
@@ -98,7 +101,6 @@ const shoppingOrderSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getOrderDetails.fulfilled, (state, action) => {
-        console.log(action.payload)
         state.isLoading = false;
         state.orderDetails=action.payload.data
       })
@@ -109,4 +111,5 @@ const shoppingOrderSlice = createSlice({
   },
 });
 
+export const {resetOrderDetails}=shoppingOrderSlice.actions
 export default shoppingOrderSlice.reducer;

@@ -12,6 +12,6 @@ const router=express.Router()
 router.post("/create",createOrder)
 router.post("/capture",capturePayment)
 router.get("/get/:userId",getAllOrdersByUser)
-router.get("/update/:id",getOrderDetails)
+router.get("/details/:id",getOrderDetails)
 
 module.exports=router

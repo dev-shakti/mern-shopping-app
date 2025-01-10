@@ -47,8 +47,6 @@ const AdminOrderView = () => {
     if (orderDetails !== null) setOpenDetailDialog(true);
   }, [orderDetails]);
 
-  console.log(openDetailsDialog)
-
   return (
     <Card>
       <CardHeader>
