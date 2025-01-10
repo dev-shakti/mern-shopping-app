@@ -46,7 +46,7 @@ const AdminOrderView = () => {
   useEffect(() => {
     if (orderDetails !== null) setOpenDetailDialog(true);
   }, [orderDetails]);
-
+  
   return (
     <Card>
       <CardHeader>

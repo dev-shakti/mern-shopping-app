@@ -24,7 +24,7 @@ const statusStyles = {
   rejected: "bg-red-600",
   confirmed:"bg-black"
 };
-const AdminOrderDetailDialog = ({ orderDetails}) => {
+const AdminOrderDetailDialog = ({ orderDetails,setOpenDetailDialog}) => {
   const [formData, setFormData] = useState(initialFormData);
   const dispatch = useDispatch();
 
@@ -38,15 +38,15 @@ const AdminOrderDetailDialog = ({ orderDetails}) => {
         if (data?.payload?.success) {
           dispatch(getOrderDetailsByAdmin(orderDetails?._id));
           dispatch(getAllOrdersByAdmin()); 
-          setFormData(initialFormData);
           toast.success(data?.payload?.message);
+          setFormData(initialFormData);
         }
       })
       .catch((err) => {
         console.log(err);
       });
   };
-  
+ 
   return (
     <DialogContent className="sm:max-w-[600px]">
       <div className="grid gap-6">
