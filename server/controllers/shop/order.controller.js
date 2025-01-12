@@ -23,6 +23,16 @@ const createOrder = async (req, res) => {
       payerId,
       cartId,
     } = req.body;
+
+  const isProduction = process.env.NODE_ENV === "production";
+
+    const paypalReturnUrl = isProduction
+  ? process.env.RETURN_URL_PROD
+  : process.env.RETURN_URL_DEV;
+
+  const paypalCancelUrl = isProduction
+  ? process.env.CANCEL_URL_PROD
+  : process.env.CANCEL_URL_DEV;
   
     // Construct the PayPal payment JSON
     const create_payment_json = {
@@ -31,8 +41,8 @@ const createOrder = async (req, res) => {
         payment_method: "paypal",
       },
       redirect_urls: {
-        return_url: process.env.RETURN_URL,
-        cancel_url: process.env.CANCEL_URL,
+        return_url: paypalReturnUrl,
+        cancel_url: paypalCancelUrl,
       },
       transactions: [
         {

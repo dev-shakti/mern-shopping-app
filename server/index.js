@@ -24,9 +24,16 @@ const port = process.env.PORT || 3000;
 //middlewares
 app.use(express.json());
 app.use(cookieParser());
+
+const isProduction = process.env.NODE_ENV === "production";
+
+const corsOrigin = isProduction
+  ? process.env.CLIENT_BASE_URL_PROD
+  : process.env.CLIENT_BASE_URL_DEV;
+
 app.use(
   cors({
-    origin:"http://localhost:5173",
+    origin:corsOrigin,
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
